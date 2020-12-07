@@ -21,6 +21,7 @@
         <activity
             android:name=".DetectorActivity"
             android:screenOrientation="portrait" />
+        <!--    yang pertama dijalankan adalah SplashScreen    -->
         <activity
             android:name=".Splashscreen"
             android:label="@string/activity_name_detection"

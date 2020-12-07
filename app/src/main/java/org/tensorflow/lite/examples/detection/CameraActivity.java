@@ -525,9 +525,9 @@ public abstract class CameraActivity extends AppCompatActivity
             isRecord = !isRecord;
 
             if (isRecord) {
-                recordButton.setImageResource(R.drawable.ic_play);
-            } else {
                 recordButton.setImageResource(R.drawable.ic_stop);
+            } else {
+                recordButton.setImageResource(R.drawable.ic_play);
             }
         }
     }

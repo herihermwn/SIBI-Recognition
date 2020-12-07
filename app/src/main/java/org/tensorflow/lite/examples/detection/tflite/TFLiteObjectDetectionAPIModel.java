@@ -29,7 +29,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
@@ -75,6 +74,11 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
     private float[][][] outputReg = new float[1][2944][18];
     private float[][][] outputClf = new float[1][2944][1];
 
+    /*
+    variabel outputJoints = kordinat tangan dari objek yang sudah terdeteksi (campuran)
+    x untuk genap
+    y untuk ganjil
+    */
     private float[][] outputJoints = new float[1][42];
 
     private ByteBuffer imgData;
@@ -362,10 +366,11 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         String gesture = "";
         StructuredLandmarks[] landmarks = getStructuredLandmarks(outputJoints[0]);
 
-        if (outputJoints[0][4] < outputJoints[0][34]) {
-            gesture = recognizeLeftGesture(landmarks);
+        //
+        if (outputJoints[0][4] < outputJoints[0][34]) { //
+            gesture = punggungTanganGesture(landmarks);
         } else {
-            gesture = recognizeRightGesture(landmarks);
+            gesture = telapakTanganGesture(landmarks);
         }
 
         recognitions.add(new Recognition(2, gesture, (float) (1 / (1 + Math.exp(-outputClf[0][clf_max_idx][0]))), new RectF(
@@ -443,19 +448,6 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         return triangle;
     }
 
-    @Override
-    public void enableStatLogging(final boolean logStats) {
-    }
-
-    @Override
-    public String getStatString() {
-        return "";
-    }
-
-    @Override
-    public void close() {
-    }
-
     public void setNumThreads(int num_threads) {
         if (tfLite != null) setNumThreads(num_threads);
     }
@@ -465,102 +457,107 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         if (tfLite != null) setUseNNAPI(isChecked);
     }
 
-    public static String recognizeLeftGesture(StructuredLandmarks[] landmarks) {
+    public static String punggungTanganGesture(StructuredLandmarks[] landmarks) {
         // finger states
-        boolean thumbIsOpen = false;
-        boolean firstFingerIsOpen = false;
-        boolean secondFingerIsOpen = false;
-        boolean thirdFingerIsOpen = false;
-        boolean fourthFingerIsOpen = false;
+        boolean jempolTerbuka = false;        // jempol
+        boolean telunjukTerbuka = false;
+        boolean jariTengahTerbuka = false;
+        boolean jariManisTerbuka = false;
+        boolean kelingkingTerbuka = false;
         LOGGER.d("Punggung tangan joints = " + Arrays.toString(landmarks));
 
         double pseudoFixKeyPoint = landmarks[2].getX(); //compare x
         if (landmarks[3].getX() < pseudoFixKeyPoint && landmarks[4].getX() < pseudoFixKeyPoint) {
-            thumbIsOpen = true;
+            jempolTerbuka = true;
         }
 
         pseudoFixKeyPoint = landmarks[6].getY(); //compare y
         if (landmarks[7].getY() < pseudoFixKeyPoint && landmarks[8].getY() < pseudoFixKeyPoint) {
-            firstFingerIsOpen = true;
+            telunjukTerbuka = true;
         }
 
         pseudoFixKeyPoint = landmarks[10].getY(); //compare y
         if (landmarks[11].getY() < pseudoFixKeyPoint && landmarks[12].getY() < pseudoFixKeyPoint) {
-            secondFingerIsOpen = true;
+            jariTengahTerbuka = true;
         }
 
         pseudoFixKeyPoint = landmarks[14].getY(); //compare y
         if (landmarks[15].getY() < pseudoFixKeyPoint && landmarks[16].getY() < pseudoFixKeyPoint) {
-            thirdFingerIsOpen = true;
+            jariManisTerbuka = true;
         }
 
         pseudoFixKeyPoint = landmarks[18].getY(); //compare y
         if (landmarks[19].getY() < pseudoFixKeyPoint && landmarks[20].getY() < pseudoFixKeyPoint) {
-            fourthFingerIsOpen = true;
+            kelingkingTerbuka = true;
         }
 
         // Hand gesture recognition
-        if (thumbIsOpen && !firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen) {
+        if (jempolTerbuka && !telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
             return "10";
         }
 
         return "Gesture tidak di kenali";
     }
 
-    public static String recognizeRightGesture(StructuredLandmarks[] landmarks) {
+    public static String telapakTanganGesture(StructuredLandmarks[] landmarks) {
         // finger states
-        boolean thumbIsOpen = false;
-        boolean firstFingerIsOpen = false;
-        boolean secondFingerIsOpen = false;
-        boolean thirdFingerIsOpen = false;
-        boolean fourthFingerIsOpen = false;
+        boolean jempolTerbuka = false;
+        boolean telunjukTerbuka = false;
+        boolean jariTengahTerbuka = false;
+        boolean jariManisTerbuka = false;
+        boolean kelingkingTerbuka = false;
         LOGGER.d("Telapak tangan joints = " + Arrays.toString(landmarks));
 
         double pseudoFixKeyPoint = landmarks[2].getX(); //compare x
         if (landmarks[3].getX() < pseudoFixKeyPoint && landmarks[4].getX() < pseudoFixKeyPoint) {
-            thumbIsOpen = true;
+            jempolTerbuka = true;
         }
 
         pseudoFixKeyPoint = landmarks[6].getY(); //compare y
         if (landmarks[7].getY() < pseudoFixKeyPoint && landmarks[8].getY() < pseudoFixKeyPoint) {
-            firstFingerIsOpen = true;
+            telunjukTerbuka = true;
         }
 
         pseudoFixKeyPoint = landmarks[10].getY(); //compare y
         if (landmarks[11].getY() < pseudoFixKeyPoint && landmarks[12].getY() < pseudoFixKeyPoint) {
-            secondFingerIsOpen = true;
+            jariTengahTerbuka = true;
         }
 
         pseudoFixKeyPoint = landmarks[14].getY(); //compare y
         if (landmarks[15].getY() < pseudoFixKeyPoint && landmarks[16].getY() < pseudoFixKeyPoint) {
-            thirdFingerIsOpen = true;
+            jariManisTerbuka = true;
         }
 
         pseudoFixKeyPoint = landmarks[18].getY(); //compare y
         if (landmarks[19].getY() < pseudoFixKeyPoint && landmarks[20].getY() < pseudoFixKeyPoint) {
-            fourthFingerIsOpen = true;
+            kelingkingTerbuka = true;
         }
 
-        LOGGER.d("Awe : 20 " + landmarks[20].getX());
-        LOGGER.d("Awe : 4 " + landmarks[4].getX());
+        // testing kordinat tangan
+        LOGGER.d("Test : 20 " + landmarks[20].getX());
+        LOGGER.d("Test : 4 " + landmarks[4].getX());
+
+        LOGGER.d("Test : X8 " + landmarks[8].getX());
+        LOGGER.d("Test : Y8 " + landmarks[8].getY());
 
         // Hand gesture recognition
-        if (!thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen) {
+        if (!jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && jariManisTerbuka && kelingkingTerbuka) {
             return "5";
-        } else if (thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && thirdFingerIsOpen && fourthFingerIsOpen) {
+        } else if (jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && jariManisTerbuka && kelingkingTerbuka) {
             return "4";
-        } else if (!thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen) {
+        } else if (!jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
             return "3";
-        } else if (thumbIsOpen && firstFingerIsOpen && secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen) {
+        } else if (jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
             return "2";
-        } else if (thumbIsOpen && firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen) {
+        } else if (jempolTerbuka && telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
             return "1";
-        } else if (!thumbIsOpen && !firstFingerIsOpen && !secondFingerIsOpen && !thirdFingerIsOpen && !fourthFingerIsOpen) {
+        } else if (!jempolTerbuka && !telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
             return "0";
         }
         return "Gesture tidak di kenali";
     }
 
+    // fungsi untuk filter koordinat x dan y
     StructuredLandmarks[] getStructuredLandmarks(float[] joints) {
         int index = 0;
         StructuredLandmarks[] structuredLandmarks = new StructuredLandmarks[21];
