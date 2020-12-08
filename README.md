@@ -1,4 +1,20 @@
-# TensorFlow Lite Object Detection Android Demo
+# SIBI Recognition Android
+
+## Landmarks
+<pre>
+<img src="img/landmarks.png"> 
+</pre>
+
+## Gesture
+#### Number
+<pre>
+<img src="img/Isyarat-Angka-SIBI.jpg"> 
+</pre>
+#### Alphabet
+<pre>
+<img src="img/Isyarat-Huruf-SIBI.jpg"> 
+</pre>
+
 ### Overview
 This is a camera app that continuously detects the objects (bounding boxes and classes) in the frames seen by your device's back camera, using a quantized [MobileNet SSD](https://github.com/tensorflow/models/tree/master/research/object_detection) model trained on the [COCO dataset](http://cocodataset.org/). These instructions walk you through building and running the demo on an Android device.
 
@@ -39,3 +55,4 @@ If you explicitly want to download the model, you can download from **[here](htt
 
 ### Additional Note
 _Please do not delete the assets folder content_. If you explicitly deleted the files, then please choose *Build*->*Rebuild* from menu to re-download the deleted model files into assets folder.
+
