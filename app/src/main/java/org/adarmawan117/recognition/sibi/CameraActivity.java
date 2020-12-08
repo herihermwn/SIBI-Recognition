@@ -454,7 +454,6 @@ public abstract class CameraActivity extends AppCompatActivity
         for (int i = 0; i < planes.length; ++i) {
             final ByteBuffer buffer = planes[i].getBuffer();
             if (yuvBytes[i] == null) {
-                LOGGER.d("Initializing buffer %d at size %d", i, buffer.capacity());
                 yuvBytes[i] = new byte[buffer.capacity()];
             }
             buffer.get(yuvBytes[i]);
@@ -510,9 +509,9 @@ public abstract class CameraActivity extends AppCompatActivity
             isRecord = !isRecord;
 
             if (isRecord) {
-                recordButton.setImageResource(R.drawable.ic_play);
-            } else {
                 recordButton.setImageResource(R.drawable.ic_stop);
+            } else {
+                recordButton.setImageResource(R.drawable.ic_play);
             }
         }
     }
