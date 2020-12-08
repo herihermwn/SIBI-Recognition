@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-package org.tensorflow.lite.examples.detection.tflite;
+package org.adarmawan117.recognition.sibi.tflite;
 
 
 import android.content.res.AssetFileDescriptor;
@@ -23,13 +23,11 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.os.Trace;
-
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
@@ -41,15 +39,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Vector;
-
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
 import org.tensorflow.lite.Interpreter;
-import org.tensorflow.lite.examples.detection.env.Logger;
-import org.tensorflow.lite.examples.detection.env.StructuredLandmarks;
+import org.adarmawan117.recognition.sibi.env.Logger;
+import org.adarmawan117.recognition.sibi.env.StructuredLandmarks;
 
 /**
  * Wrapper for frozen detection models trained using the Tensorflow Object Detection API:

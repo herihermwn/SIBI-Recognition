@@ -1,4 +1,4 @@
-package org.tensorflow.lite.examples.detection.env;
+package org.adarmawan117.recognition.sibi.env;
 
 public class StructuredLandmarks {
     private final double x;

@@ -23,7 +23,7 @@
             android:layout_height="match_parent"
             tools:context=".MainActivity">
 
-            <org.tensorflow.lite.examples.detection.customview.FabBottomNavigationView
+            <org.adarmawan117.recognition.sibi.customview.FabBottomNavigationView
                 android:id="@+id/bottomNavigationView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

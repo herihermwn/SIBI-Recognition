@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.tensorflow.lite.examples.detection;
+package org.adarmawan117.recognition.sibi;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -54,13 +54,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.nio.ByteBuffer;
-
 import org.opencv.android.OpenCVLoader;
-import org.tensorflow.lite.examples.detection.customview.FabBottomNavigationView;
-import org.tensorflow.lite.examples.detection.env.ImageUtils;
-import org.tensorflow.lite.examples.detection.env.Logger;
+import org.adarmawan117.recognition.sibi.customview.FabBottomNavigationView;
+import org.adarmawan117.recognition.sibi.env.ImageUtils;
+import org.adarmawan117.recognition.sibi.env.Logger;
 
 public abstract class CameraActivity extends AppCompatActivity
         implements OnImageAvailableListener,

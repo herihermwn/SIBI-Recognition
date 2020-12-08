@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package org.tensorflow.lite.examples.detection;
+package org.adarmawan117.recognition.sibi;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -27,25 +26,20 @@ import android.graphics.Paint.Style;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.media.ImageReader.OnImageAvailableListener;
-import android.os.Environment;
-import android.os.SystemClock;
-import android.util.Log;
 import android.util.Size;
 import android.util.TypedValue;
 import android.widget.Toast;
-
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.tensorflow.lite.examples.detection.customview.OverlayView;
-import org.tensorflow.lite.examples.detection.customview.OverlayView.DrawCallback;
-import org.tensorflow.lite.examples.detection.env.BorderedText;
-import org.tensorflow.lite.examples.detection.env.ImageUtils;
-import org.tensorflow.lite.examples.detection.env.Logger;
-import org.tensorflow.lite.examples.detection.tflite.Classifier;
-import org.tensorflow.lite.examples.detection.tflite.TFLiteObjectDetectionAPIModel;
-import org.tensorflow.lite.examples.detection.tracking.MultiBoxTracker;
+import org.adarmawan117.recognition.sibi.customview.OverlayView;
+import org.adarmawan117.recognition.sibi.customview.OverlayView.DrawCallback;
+import org.adarmawan117.recognition.sibi.env.BorderedText;
+import org.adarmawan117.recognition.sibi.env.ImageUtils;
+import org.adarmawan117.recognition.sibi.env.Logger;
+import org.adarmawan117.recognition.sibi.tflite.Classifier;
+import org.adarmawan117.recognition.sibi.tflite.TFLiteObjectDetectionAPIModel;
+import org.adarmawan117.recognition.sibi.tracking.MultiBoxTracker;
 
 /**
  * An activity that uses a TensorFlowMultiBoxDetector and ObjectTracker to detect and then track

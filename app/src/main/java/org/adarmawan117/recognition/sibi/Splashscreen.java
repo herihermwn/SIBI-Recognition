@@ -1,4 +1,4 @@
-package org.tensorflow.lite.examples.detection;
+package org.adarmawan117.recognition.sibi;
 
 import androidx.appcompat.app.AppCompatActivity;
 

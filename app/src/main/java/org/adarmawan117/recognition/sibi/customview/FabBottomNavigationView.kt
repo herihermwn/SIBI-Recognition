@@ -1,4 +1,4 @@
-package org.tensorflow.lite.examples.detection.customview
+package org.adarmawan117.recognition.sibi.customview
 
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
@@ -13,7 +13,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
-import org.tensorflow.lite.examples.detection.R
+import org.adarmawan117.recognition.sibi.R
 
 @SuppressLint("RestrictedApi")
 class FabBottomNavigationView @JvmOverloads constructor(
