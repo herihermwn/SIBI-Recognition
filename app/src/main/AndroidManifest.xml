@@ -21,6 +21,7 @@
         <activity
             android:name="org.adarmawan117.recognition.sibi.DetectorActivity"
             android:screenOrientation="portrait" />
+        <!--    yang pertama dijalankan adalah SplashScreen    -->
         <activity
             android:name="org.adarmawan117.recognition.sibi.Splashscreen"
             android:label="@string/activity_name_detection"

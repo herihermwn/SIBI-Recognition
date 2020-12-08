@@ -144,20 +144,7 @@ public abstract class CameraActivity extends AppCompatActivity
                 new BottomSheetBehavior.BottomSheetCallback() {
                     @Override
                     public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                        switch (newState) {
-                            case BottomSheetBehavior.STATE_HIDDEN:
-                                break;
-                            case BottomSheetBehavior.STATE_EXPANDED: {
-                            }
-                            break;
-                            case BottomSheetBehavior.STATE_COLLAPSED: {
-                            }
-                            break;
-                            case BottomSheetBehavior.STATE_DRAGGING:
-                                break;
-                            case BottomSheetBehavior.STATE_SETTLING:
-                                break;
-                        }
+
                     }
 
                     @Override
