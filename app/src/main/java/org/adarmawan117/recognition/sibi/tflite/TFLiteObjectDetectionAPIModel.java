@@ -482,21 +482,22 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         }
 
         // Hand gesture recognition
-        if (!jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && jariManisTerbuka && kelingkingTerbuka) {
-            return "5";
-        } else if (jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && jariManisTerbuka && kelingkingTerbuka) {
-            return "4";
-        } else if (!jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
-            return "3";
-        } else if (jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
-            return "2";
-        } else if (jempolTerbuka && telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
-            return "1";
-        } else if (!jempolTerbuka && !telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
-            return "0";
-        }
-
-        return "Gesture tidak di kenali";
+//        if (!jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && jariManisTerbuka && kelingkingTerbuka) {
+//            return "5";
+//        } else if (jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && jariManisTerbuka && kelingkingTerbuka) {
+//            return "4";
+//        } else if (!jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
+//            return "3";
+//        } else if (jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
+//            return "2";
+//        } else if (jempolTerbuka && telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
+//            return "1";
+//        } else if (!jempolTerbuka && !telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
+//            return "0";
+//        }
+        return "";
+//        return "Untuk sementara gunakan telapak tangan kanan";
+//        return "Gesture tidak di kenali";
     }
 
     public static String telapakTanganGesture(StructuredLandmarks[] landmarks) {
@@ -508,6 +509,32 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         boolean kelingkingTerbuka = false;
         LOGGER.d("Telapak tangan joints = " + Arrays.toString(landmarks));
 
+        /*
+
+                  LANDMARK TANGAN KIRI
+
+            8           12            16
+              7         11         15         20
+        4       6       10      14         19
+          3     ***5****9****13***      18
+            2***                  ***17
+               *                  *
+                1               *
+                  *************
+                        0
+
+                  LANDMARK TANGAN KANAN
+
+            16           12            8
+      20      15         11         7
+        19       14      10      6         4
+          18     **13****9****5****     3
+            17***                  ***2
+               *                  *
+                *               1
+                  *************
+                        0
+         */
         double pseudoFixKeyPoint = landmarks[2].getX(); //compare x
         if (landmarks[3].getX() < pseudoFixKeyPoint && landmarks[4].getX() < pseudoFixKeyPoint) {
             jempolTerbuka = true;
@@ -549,11 +576,11 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
 
 
         // Hand gesture recognition
-        double jempol = landmarks[2].getX();
-        double telunjuk = landmarks[6].getX();
-        double jariTengah = landmarks[10].getX();
-        double jariManis = landmarks[14].getX();
-        double kelingking = landmarks[18].getX();
+//        double jempol = landmarks[2].getX();
+//        double telunjuk = landmarks[6].getX();
+//        double jariTengah = landmarks[10].getX();
+//        double jariManis = landmarks[14].getX();
+//        double kelingking = landmarks[18].getX();
 
 //        if (
 //                (jempol     >= 51 && jempol     <= 163) &&
@@ -563,7 +590,7 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
 //                (kelingking >= 68 && kelingking <= 91)
 //        ) {
 //            return "A";
-        LOGGER.d("Jempol      : "+ (jempol     >= 51 && jempol     <= 163)+ "\nTelunjuk    : "+ (telunjuk   >= 27 && telunjuk   <= 55)+ "\nJari Tengah : "+ (jariTengah >= 99 && jariTengah <= 129)+ "\nJari Manis  : "+ (jariManis  >= 81 && jariManis  <= 109)+ "\nKelingking  : "+ (kelingking >= 68 && kelingking <= 91));
+        //LOGGER.d("Jempol      : "+ (jempol     >= 51 && jempol     <= 163)+ "\nTelunjuk    : "+ (telunjuk   >= 27 && telunjuk   <= 55)+ "\nJari Tengah : "+ (jariTengah >= 99 && jariTengah <= 129)+ "\nJari Manis  : "+ (jariManis  >= 81 && jariManis  <= 109)+ "\nKelingking  : "+ (kelingking >= 68 && kelingking <= 91));
 
         if (!jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && jariManisTerbuka && kelingkingTerbuka) {
             return "5";
@@ -578,7 +605,7 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         } else if (!jempolTerbuka && telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
             return "A";
         }
-        return "Gesture tidak di kenali";
+        return " ";
     }
 
     // fungsi untuk filter koordinat x dan y

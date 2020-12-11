@@ -362,7 +362,7 @@ public abstract class CameraActivity extends AppCompatActivity
             if (shouldShowRequestPermissionRationale(PERMISSION_CAMERA)) {
                 Toast.makeText(
                         CameraActivity.this,
-                        "Camera permission is required for this demo",
+                        "Camera permission is required for this application",
                         Toast.LENGTH_LONG)
                         .show();
             }
@@ -517,8 +517,10 @@ public abstract class CameraActivity extends AppCompatActivity
     }
 
     @SuppressLint("SetTextI18n")
+    String hasil = "Gesture: ";
     protected void setGestureTitle(String title) {
-        gestureTitle.setText("Gesture : "+title);
+        hasil += title;
+        gestureTitle.setText(hasil);
     }
 
     protected abstract void processImage();
