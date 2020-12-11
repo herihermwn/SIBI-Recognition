@@ -8,11 +8,11 @@
 ## Gesture
 #### Number
 <pre>
-<img src="img/Isyarat-Angka-SIBI.jpg"> 
+<img src="assets/image/Isyarat-Angka-SIBI.jpg"> 
 </pre>
 #### Alphabet
 <pre>
-<img src="img/Isyarat-Huruf-SIBI.jpg"> 
+<img src="assets/image/Isyarat-Huruf-SIBI.jpg"> 
 </pre>
 
 ### Overview
