@@ -38,6 +38,7 @@ import android.os.Trace;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -45,16 +46,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 
 import android.util.Size;
+import android.view.Gravity;
 import android.view.Surface;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.CompoundButton;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
+
 import org.opencv.android.OpenCVLoader;
 import org.adarmawan117.recognition.sibi.customview.FabBottomNavigationView;
 import org.adarmawan117.recognition.sibi.env.ImageUtils;
@@ -95,6 +102,7 @@ public abstract class CameraActivity extends AppCompatActivity
     private TextView delayTextView;
     private TextView gestureTitle;
     private FloatingActionButton recordButton;
+    private FabBottomNavigationView fabBottomNavigationView;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -126,6 +134,7 @@ public abstract class CameraActivity extends AppCompatActivity
         bottomSheetArrowImageView = findViewById(R.id.bottomNavigationView);
         gestureTitle = findViewById(R.id.gestureTitle);
         recordButton = findViewById(R.id.recordButton);
+        fabBottomNavigationView = findViewById(R.id.bottomNavigationView);
 
         ViewTreeObserver vto = gestureLayout.getViewTreeObserver();
         vto.addOnGlobalLayoutListener(
@@ -153,6 +162,9 @@ public abstract class CameraActivity extends AppCompatActivity
                 });
 
         delayTextView.setText(String.valueOf(delay));
+
+        adjustGravity(fabBottomNavigationView);
+        adjustWidth(fabBottomNavigationView);
 
         apiSwitchCompat.setOnCheckedChangeListener(this);
         recordButton.setOnClickListener(this);
@@ -516,9 +528,42 @@ public abstract class CameraActivity extends AppCompatActivity
         }
     }
 
+    private static void adjustGravity(View v) {
+        if (v.getId() == com.google.android.material.R.id.smallLabel) {
+            ViewGroup parent = (ViewGroup) v.getParent();
+            parent.setPadding(0, 0, 0, 0);
+
+            FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) parent.getLayoutParams();
+            params.gravity = Gravity.CENTER;
+            parent.setLayoutParams(params);
+        }
+
+        if (v instanceof ViewGroup) {
+            ViewGroup vg = (ViewGroup) v;
+
+            for (int i = 0; i < vg.getChildCount(); i++) {
+                adjustGravity(vg.getChildAt(i));
+            }
+        }
+    }
+
+    private static void adjustWidth(BottomNavigationView nav) {
+        try {
+            Field menuViewField = nav.getClass().getDeclaredField("mMenuView");
+            menuViewField.setAccessible(true);
+            Object menuView = menuViewField.get(nav);
+
+            Field itemWidth = menuView.getClass().getDeclaredField("mActiveItemMaxWidth");
+            itemWidth.setAccessible(true);
+            itemWidth.setInt(menuView, Integer.MAX_VALUE);
+        } catch (NoSuchFieldException e) {
+        } catch (IllegalAccessException e) {
+        }
+    }
+
     @SuppressLint("SetTextI18n")
     protected void setGestureTitle(String title) {
-        gestureTitle.setText("Gesture : "+title);
+        gestureTitle.setText("Gesture : " + title);
     }
 
     protected abstract void processImage();

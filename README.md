@@ -2,7 +2,7 @@
 
 ## Landmarks
 <pre>
-<img src="img/landmarks.png"> 
+<img src="assets/image/landmarks.png"> 
 </pre>
 
 ## Gesture

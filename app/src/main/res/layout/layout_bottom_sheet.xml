@@ -27,13 +27,14 @@
                 android:id="@+id/bottomNavigationView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
+                android:layout_gravity="center"
                 android:layout_marginTop="24dp"
                 android:backgroundTint="@android:color/white"
                 app:fab_size="85dp"
-                app:layout_anchor="@+id/bottomNavigationView"
-                app:layout_anchorGravity="top|center"
+                app:itemTextAppearanceActive="@style/BottomNavigationView"
+                app:itemTextAppearanceInactive="@style/BottomNavigationView"
                 app:itemTextColor="@color/colorPrimaryDark"
+                app:layout_anchorGravity="top|center"
                 app:menu="@menu/bottom_menu"/>
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
