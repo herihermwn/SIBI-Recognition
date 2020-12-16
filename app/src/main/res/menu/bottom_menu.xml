@@ -4,7 +4,8 @@
     android:layout_height="wrap_content">
 
     <item
-        android:enabled="false"
+        android:id="@+id/nav_category"
+        android:enabled="true"
         android:title="Kategori" />
 
     <item
@@ -12,7 +13,8 @@
         android:title="" />
 
     <item
-        android:enabled="false"
+        android:id="@+id/nav_tentang"
+        android:enabled="true"
         android:title="Tentang" />
 
 </menu>

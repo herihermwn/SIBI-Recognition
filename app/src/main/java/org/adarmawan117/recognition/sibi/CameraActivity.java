@@ -18,8 +18,11 @@ package org.adarmawan117.recognition.sibi;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.hardware.camera2.CameraAccessException;
@@ -45,8 +48,10 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 
+import android.util.Log;
 import android.util.Size;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,6 +61,7 @@ import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -96,7 +102,6 @@ public abstract class CameraActivity extends AppCompatActivity
     private LinearLayout gestureLayout;
     private BottomSheetBehavior sheetBehavior;
 
-    protected FabBottomNavigationView bottomSheetArrowImageView;
     private ImageView plusImageView, minusImageView;
     private SwitchCompat apiSwitchCompat;
     private TextView delayTextView;
@@ -131,7 +136,6 @@ public abstract class CameraActivity extends AppCompatActivity
         bottomSheetLayout = findViewById(R.id.bottom_sheet_layout);
         gestureLayout = findViewById(R.id.gesture_layout);
         sheetBehavior = BottomSheetBehavior.from(bottomSheetLayout);
-        bottomSheetArrowImageView = findViewById(R.id.bottomNavigationView);
         gestureTitle = findViewById(R.id.gestureTitle);
         recordButton = findViewById(R.id.recordButton);
         fabBottomNavigationView = findViewById(R.id.bottomNavigationView);
@@ -148,23 +152,27 @@ public abstract class CameraActivity extends AppCompatActivity
                     }
                 });
         sheetBehavior.setHideable(false);
-
-        sheetBehavior.setBottomSheetCallback(
-                new BottomSheetBehavior.BottomSheetCallback() {
-                    @Override
-                    public void onStateChanged(@NonNull View bottomSheet, int newState) {
-
-                    }
-
-                    @Override
-                    public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-                    }
-                });
-
         delayTextView.setText(String.valueOf(delay));
 
         adjustGravity(fabBottomNavigationView);
         adjustWidth(fabBottomNavigationView);
+
+        fabBottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.nav_tentang:
+                        Intent moveIntent = new Intent(CameraActivity.this, AboutActivity.class);
+                        startActivity(moveIntent);
+                        finish();
+                        return true;
+                    case R.id.nav_category:
+                        LOGGER.d("awe : Belum ada action");
+                        return true;
+                }
+                return false;
+            }
+        });
 
         apiSwitchCompat.setOnCheckedChangeListener(this);
         recordButton.setOnClickListener(this);
@@ -288,50 +296,6 @@ public abstract class CameraActivity extends AppCompatActivity
             return;
         }
         Trace.endSection();
-    }
-
-    @Override
-    public synchronized void onStart() {
-        LOGGER.d("onStart " + this);
-        super.onStart();
-    }
-
-    @Override
-    public synchronized void onResume() {
-        LOGGER.d("onResume " + this);
-        super.onResume();
-
-        handlerThread = new HandlerThread("inference");
-        handlerThread.start();
-        handler = new Handler(handlerThread.getLooper());
-    }
-
-    @Override
-    public synchronized void onPause() {
-        LOGGER.d("onPause " + this);
-
-        handlerThread.quitSafely();
-        try {
-            handlerThread.join();
-            handlerThread = null;
-            handler = null;
-        } catch (final InterruptedException e) {
-            LOGGER.e(e, "Exception!");
-        }
-
-        super.onPause();
-    }
-
-    @Override
-    public synchronized void onStop() {
-        LOGGER.d("onStop " + this);
-        super.onStop();
-    }
-
-    @Override
-    public synchronized void onDestroy() {
-        LOGGER.d("onDestroy " + this);
-        super.onDestroy();
     }
 
     protected synchronized void runInBackground(final Runnable r) {

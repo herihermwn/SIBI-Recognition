@@ -18,12 +18,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".AboutActivity"></activity>
         <activity
-            android:name="org.adarmawan117.recognition.sibi.DetectorActivity"
-            android:screenOrientation="portrait" />
-        <!--    yang pertama dijalankan adalah SplashScreen    -->
+            android:name=".DetectorActivity"
+            android:screenOrientation="portrait" /> <!-- yang pertama dijalankan adalah SplashScreen -->
         <activity
-            android:name="org.adarmawan117.recognition.sibi.Splashscreen"
+            android:name=".Splashscreen"
             android:label="@string/activity_name_detection"
             android:screenOrientation="portrait">
             <intent-filter>

@@ -1,22 +1,16 @@
 package org.adarmawan117.recognition.sibi.customview
 
-import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Paint
 import android.util.AttributeSet
-import android.view.Gravity
-import android.view.View
-import android.view.ViewGroup
-import android.widget.FrameLayout
-import androidx.core.animation.doOnEnd
+import android.view.MenuItem
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import com.google.android.material.bottomappbar.BottomAppBarTopEdgeTreatment
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
+import org.adarmawan117.recognition.sibi.CameraActivity
 import org.adarmawan117.recognition.sibi.R
 
 @SuppressLint("RestrictedApi")
@@ -53,4 +47,8 @@ class FabBottomNavigationView @JvmOverloads constructor(
         background = materialShapeDrawable
     }
 
+    override fun setOnNavigationItemSelectedListener(listener: OnNavigationItemSelectedListener?) {
+        super.setOnNavigationItemSelectedListener(listener)
+    }
 }
+
