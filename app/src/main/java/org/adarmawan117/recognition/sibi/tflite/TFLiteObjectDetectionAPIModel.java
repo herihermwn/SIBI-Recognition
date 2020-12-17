@@ -87,9 +87,6 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
 
     private Interpreter landmarkTfLite;
 
-    private TFLiteObjectDetectionAPIModel() {
-    }
-
     /**
      * Memory-map the model file in Assets.
      */
@@ -485,8 +482,18 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         }
 
         // Hand gesture recognition
-        if (jempolTerbuka && !telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
-            return "10";
+        if (!jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && jariManisTerbuka && kelingkingTerbuka) {
+            return "5";
+        } else if (jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && jariManisTerbuka && kelingkingTerbuka) {
+            return "4";
+        } else if (!jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
+            return "3";
+        } else if (jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
+            return "2";
+        } else if (jempolTerbuka && telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
+            return "1";
+        } else if (!jempolTerbuka && !telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
+            return "0";
         }
 
         return "Gesture tidak di kenali";
@@ -527,13 +534,37 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         }
 
         // testing kordinat tangan
-        LOGGER.d("Test : 20 " + landmarks[20].getX());
-        LOGGER.d("Test : 4 " + landmarks[4].getX());
+//        LOGGER.d("Test : 20 " + landmarks[20].getX());
+//        LOGGER.d("Test : 4 " + landmarks[4].getX());
+//
+//        LOGGER.d("Test : X8 " + landmarks[8].getX());
+//        LOGGER.d("Test : Y8 " + landmarks[8].getY());
 
-        LOGGER.d("Test : X8 " + landmarks[8].getX());
-        LOGGER.d("Test : Y8 " + landmarks[8].getY());
+//        LOGGER.d("Status: Jempol => " + jempolTerbuka + " :: Telunjuk => " + telunjukTerbuka + " :: Jari Tengah => " + jariTengahTerbuka + " :: Jari Manis => " + jariManisTerbuka + " :: Kelingking => " + kelingkingTerbuka +
+//                "\nJempol      : " + landmarks[2].getX() + " :: " + landmarks[3].getX() + " :: " + landmarks[4].getX() +
+//                "\nTelunjuk    : " + landmarks[6].getX() + " :: " + landmarks[7].getX() + " :: " + landmarks[8].getX() +
+//                "\nJari Tengah : " + landmarks[10].getX() + " :: " + landmarks[11].getX() + " :: " + landmarks[12].getX() +
+//                "\nJari Manis  : " + landmarks[14].getX() + " :: " + landmarks[15].getX() + " :: " + landmarks[16].getX() +
+//                "\nKelingking  : " + landmarks[18].getX() + " :: " + landmarks[16].getX() + " :: " + landmarks[20].getX());
+
 
         // Hand gesture recognition
+        double jempol = landmarks[2].getX();
+        double telunjuk = landmarks[6].getX();
+        double jariTengah = landmarks[10].getX();
+        double jariManis = landmarks[14].getX();
+        double kelingking = landmarks[18].getX();
+
+//        if (
+//                (jempol     >= 51 && jempol     <= 163) &&
+//                (telunjuk   >= 27 && telunjuk   <= 55) &&
+//                (jariTengah >= 99 && jariTengah <= 129) &&
+//                (jariManis  >= 81 && jariManis  <= 109) &&
+//                (kelingking >= 68 && kelingking <= 91)
+//        ) {
+//            return "A";
+        LOGGER.d("Jempol      : "+ (jempol     >= 51 && jempol     <= 163)+ "\nTelunjuk    : "+ (telunjuk   >= 27 && telunjuk   <= 55)+ "\nJari Tengah : "+ (jariTengah >= 99 && jariTengah <= 129)+ "\nJari Manis  : "+ (jariManis  >= 81 && jariManis  <= 109)+ "\nKelingking  : "+ (kelingking >= 68 && kelingking <= 91));
+
         if (!jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && jariManisTerbuka && kelingkingTerbuka) {
             return "5";
         } else if (jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && jariManisTerbuka && kelingkingTerbuka) {
@@ -544,8 +575,8 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
             return "2";
         } else if (jempolTerbuka && telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
             return "1";
-        } else if (!jempolTerbuka && !telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
-            return "0";
+        } else if (!jempolTerbuka && telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
+            return "A";
         }
         return "Gesture tidak di kenali";
     }
