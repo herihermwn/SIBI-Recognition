@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.AboutActivity">
+    tools:context=".view.category.CategoryActivity">
 
     <LinearLayout
         android:id="@+id/header_title"
@@ -24,30 +24,29 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tentang"
+            android:text="Kategori"
             android:textSize="24sp"
             android:textStyle="bold" />
 
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/icon_app"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:src="@drawable/sibi_ikon"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/header_title" />
-
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/category_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="18dp"
-        android:layout_marginEnd="24dp"
-        android:text="@string/about"
-        android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@id/icon_app" />
+        android:layout_marginTop="24dp"
+        android:overScrollMode="never"
+        app:layout_constraintTop_toBottomOf="@id/header_title"
+        tools:listitem="@layout/item_category" />
+
+    <ProgressBar
+        android:id="@+id/ProgressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

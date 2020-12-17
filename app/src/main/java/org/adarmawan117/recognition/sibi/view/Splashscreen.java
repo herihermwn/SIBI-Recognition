@@ -1,4 +1,4 @@
-package org.adarmawan117.recognition.sibi;
+package org.adarmawan117.recognition.sibi.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+
+import org.adarmawan117.recognition.sibi.DetectorActivity;
+import org.adarmawan117.recognition.sibi.R;
 
 public class Splashscreen extends AppCompatActivity {
 

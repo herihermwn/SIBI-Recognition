@@ -18,8 +18,6 @@ package org.adarmawan117.recognition.sibi;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
@@ -48,7 +46,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 
-import android.util.Log;
 import android.util.Size;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -61,13 +58,14 @@ import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 
+import org.adarmawan117.recognition.sibi.view.AboutActivity;
+import org.adarmawan117.recognition.sibi.view.category.CategoryActivity;
 import org.opencv.android.OpenCVLoader;
 import org.adarmawan117.recognition.sibi.customview.FabBottomNavigationView;
 import org.adarmawan117.recognition.sibi.env.ImageUtils;
@@ -162,12 +160,14 @@ public abstract class CameraActivity extends AppCompatActivity
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.nav_tentang:
-                        Intent moveIntent = new Intent(CameraActivity.this, AboutActivity.class);
-                        startActivity(moveIntent);
+                        Intent tentangIntent = new Intent(CameraActivity.this, AboutActivity.class);
+                        startActivity(tentangIntent);
                         finish();
                         return true;
                     case R.id.nav_category:
-                        LOGGER.d("awe : Belum ada action");
+                        Intent categoryIntent = new Intent(CameraActivity.this, CategoryActivity.class);
+                        startActivity(categoryIntent);
+                        finish();
                         return true;
                 }
                 return false;

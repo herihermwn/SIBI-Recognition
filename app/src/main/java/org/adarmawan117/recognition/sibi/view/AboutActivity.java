@@ -1,11 +1,13 @@
-package org.adarmawan117.recognition.sibi;
+package org.adarmawan117.recognition.sibi.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ImageView;
+
+import org.adarmawan117.recognition.sibi.DetectorActivity;
+import org.adarmawan117.recognition.sibi.R;
 
 public class AboutActivity extends AppCompatActivity {
 
