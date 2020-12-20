@@ -505,7 +505,11 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
 
         // Variable Angka 6
         boolean angka6Kelingking = landmarks[4].getX() < landmarks[13].getX();
-        boolean angka6jempol = landmarks[18].getY() < landmarks[20].getY();
+        boolean angka6Jempol = landmarks[18].getY() < landmarks[20].getY();
+
+        // Variable Angka 7
+        boolean angka7Manis = landmarks[16].getY() > landmarks[14].getY();
+        boolean angka7Jempol = landmarks[4].getX() < landmarks[9].getX();
 
         double pseudoFixKeyPoint = landmarks[2].getX(); //compare x
         if (landmarks[3].getX() < pseudoFixKeyPoint && landmarks[4].getX() < pseudoFixKeyPoint) {
@@ -545,8 +549,10 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
             return "1";
         } else if (!jempolTerbuka && !telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
             return "0";
-        } else if (angka6jempol && angka6Kelingking && telunjukTerbuka && jariTengahTerbuka && jariManisTerbuka) {
+        } else if (angka6Jempol && angka6Kelingking && telunjukTerbuka && jariTengahTerbuka && jariManisTerbuka) {
             return "6";
+        } else if (angka7Jempol && angka7Manis && kelingkingTerbuka && jariTengahTerbuka && telunjukTerbuka) {
+            return "7";
         }
 
         return "Gesture tidak di kenali";
