@@ -511,6 +511,9 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         boolean angka7Manis = landmarks[16].getY() > landmarks[14].getY();
         boolean angka7Jempol = landmarks[4].getX() < landmarks[9].getX();
 
+        // Variable Angka 8
+        boolean angka8Jempol = landmarks[4].getX() < landmarks[8].getX();
+
         double pseudoFixKeyPoint = landmarks[2].getX(); //compare x
         if (landmarks[3].getX() < pseudoFixKeyPoint && landmarks[4].getX() < pseudoFixKeyPoint) {
             jempolTerbuka = true;
@@ -553,6 +556,8 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
             return "6";
         } else if (angka7Jempol && angka7Manis && kelingkingTerbuka && jariTengahTerbuka && telunjukTerbuka) {
             return "7";
+        } else if (angka8Jempol && jariManisTerbuka && kelingkingTerbuka && !jariTengahTerbuka && telunjukTerbuka) {
+            return "8";
         }
 
         return "Gesture tidak di kenali";
