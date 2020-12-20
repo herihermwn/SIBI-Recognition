@@ -23,6 +23,8 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.os.Trace;
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -501,6 +503,10 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         boolean kelingkingTerbuka = false;
         LOGGER.d("Telapak tangan joints = " + Arrays.toString(landmarks));
 
+        // Variable Angka 6
+        boolean angka6Kelingking = landmarks[4].getX() < landmarks[13].getX();
+        boolean angka6jempol = landmarks[18].getY() < landmarks[20].getY();
+
         double pseudoFixKeyPoint = landmarks[2].getX(); //compare x
         if (landmarks[3].getX() < pseudoFixKeyPoint && landmarks[4].getX() < pseudoFixKeyPoint) {
             jempolTerbuka = true;
@@ -526,13 +532,6 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
             kelingkingTerbuka = true;
         }
 
-        // testing kordinat tangan
-        LOGGER.d("Test : 20 " + landmarks[20].getX());
-        LOGGER.d("Test : 4 " + landmarks[4].getX());
-
-        LOGGER.d("Test : X8 " + landmarks[8].getX());
-        LOGGER.d("Test : Y8 " + landmarks[8].getY());
-
         // Hand gesture recognition
         if (!jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && jariManisTerbuka && kelingkingTerbuka) {
             return "5";
@@ -546,7 +545,10 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
             return "1";
         } else if (!jempolTerbuka && !telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
             return "0";
+        } else if (angka6jempol && angka6Kelingking && telunjukTerbuka && jariTengahTerbuka && jariManisTerbuka) {
+            return "6";
         }
+
         return "Gesture tidak di kenali";
     }
 
