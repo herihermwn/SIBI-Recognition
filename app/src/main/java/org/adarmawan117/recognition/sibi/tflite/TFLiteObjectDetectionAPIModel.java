@@ -23,8 +23,6 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.os.Trace;
-import android.util.Log;
-
 import org.adarmawan117.recognition.sibi.env.Logger;
 import org.adarmawan117.recognition.sibi.env.StructuredLandmarks;
 import org.opencv.core.CvType;
@@ -117,8 +115,8 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
      */
     public static Classifier create(
             final AssetManager assetManager,
-            final String modelFilename,
-            final String labelFilename,
+            final String modelFilename, // "palm_detection_without_custom_op.tflite";
+            final String labelFilename, // "palm_detection_labelmap.txt";
             final int inputSize,
             final boolean isQuantized)
             throws IOException {
@@ -137,7 +135,7 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         d.inputSize = inputSize;
 
         try {
-            d.tfLite = new Interpreter(loadModelFile(assetManager, modelFilename));
+            d.tfLite = new Interpreter(loadModelFile(assetManager, modelFilename)); // "palm_detection_without_custom_op.tflite";
             d.landmarkTfLite = new Interpreter(loadModelFile(assetManager, "hand_landmark.tflite"));
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -165,7 +163,7 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         try (Scanner scanner = new Scanner(assetManager.open("anchors.csv"));) {
             int x = 0;
             while (scanner.hasNextLine()) {
-                // records.add(getRecordFromLine());
+//        records.add(getRecordFromLine());
                 String[] cols = scanner.nextLine().split(",");
                 anchors[x++] = new float[]{Float.parseFloat(cols[0]), Float.parseFloat(cols[1]), Float.parseFloat(cols[2]), Float.parseFloat(cols[3])};
             }
@@ -319,12 +317,13 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         transformMatrix(mtrr, mMtr);
         float[] range = {1, 0, 0, 0, 1, 0, 0, 0, 1};
         mMtr.mapPoints(range);
+        LOGGER.d("mMtr = " + Arrays.toString(range));
         Matrix mRot = new Matrix();
         mRot.postRotate(90);
         mRot.postTranslate(oribmp.getHeight() + ((oribmp.getWidth() - oribmp.getHeight()) / 2f), 0);
 
         // make bitmap for original bitmap 1280*720 to 1280*1280 pad image
-        // Bitmap origBitmap = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory()+"/"+Environment.DIRECTORY_DCIM+"/20200203_204820.jpg");
+//    Bitmap origBitmap = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory()+"/"+Environment.DIRECTORY_DCIM+"/20200203_204820.jpg");
         Bitmap origBitmap = oribmp;
         Bitmap bitmapPad = Bitmap.createBitmap(1280, 1280, Bitmap.Config.ARGB_8888);
         Bitmap affineBitmap = Bitmap.createBitmap(256, 256, Bitmap.Config.ARGB_8888);
@@ -335,7 +334,7 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         final Canvas applyAffineCanvas = new Canvas(affineBitmap);
         applyAffineCanvas.drawBitmap(bitmapPad, mMtr, null);
 
-        // store imglandmark as byte buffer for tensorflow
+// store imglandmark as byte buffer for tensorflow
         affineBitmap.getPixels(intValues, 0, 256, 0, 0, 256, 256);
         imgData.rewind();
         for (int i = 0; i < inputSize; ++i) {
@@ -407,10 +406,14 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         float x = kp2_x - kp0_x;
         float y = kp2_y - kp0_y;
 
+        LOGGER.d("kp2 - kp0 = " + x + ", " + y);
+
         //    cal matrix norm
         float[][] dir_v = new float[1][2];
         dir_v[0][0] = x / (float) (Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)));
         dir_v[0][1] = y / (float) (Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)));
+
+        LOGGER.d("norm " + (Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2))));
 
         float[][] rotate = new float[2][2]; //R90.T
         rotate[0][0] = 0f;
@@ -495,7 +498,7 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
             return "10";
         }
 
-        return "Gesture tidak di kenali";
+        return "";
     }
 
     public static String telapakTanganGesture(StructuredLandmarks[] landmarks) {
@@ -569,9 +572,11 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
             return "7";
         } else if (angka9Jempol && angka9Telunjuk && jariTengahTerbuka && jariManisTerbuka && kelingkingTerbuka) {
             return "9";
+        } else if (!jempolTerbuka && telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
+            return "A";
         }
 
-        return "Gesture tidak di kenali";
+        return "";
     }
 
     // fungsi untuk filter koordinat x dan y

@@ -20,7 +20,7 @@ public class Splashscreen extends AppCompatActivity {
         moveActivity();
     }
 
-    void moveActivity() {
+    private void moveActivity() {
         final Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(new Runnable() {
             @Override
@@ -31,5 +31,4 @@ public class Splashscreen extends AppCompatActivity {
             }
         }, 2000);
     }
-
 }

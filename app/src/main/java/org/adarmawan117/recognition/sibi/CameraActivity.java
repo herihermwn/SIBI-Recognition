@@ -69,9 +69,10 @@ import org.opencv.android.OpenCVLoader;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 
-public abstract class CameraActivity extends AppCompatActivity
-        implements OnImageAvailableListener,
-        Camera.PreviewCallback,
+public abstract class CameraActivity
+        extends AppCompatActivity                 // onCreate()
+        implements OnImageAvailableListener,      // onImageAvailable()
+        Camera.PreviewCallback,                   // onPreviewFrame()
         CompoundButton.OnCheckedChangeListener,
         View.OnClickListener {
     private static final Logger LOGGER = new Logger();
@@ -105,6 +106,10 @@ public abstract class CameraActivity extends AppCompatActivity
     private FloatingActionButton recordButton;
     private FabBottomNavigationView fabBottomNavigationView;
 
+    /*
+    onCreate(Bundle) is where you initialize your activity.
+    Most importantly, here you will usually call setContentView(int) with a layout resource defining your UI, and using findViewById(int) to retrieve the widgets in that UI that you need to interact with programmatically.
+     */
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         LOGGER.d("onCreate " + this);
@@ -216,6 +221,11 @@ public abstract class CameraActivity extends AppCompatActivity
         return rgbBytes;
     }
 
+    /*
+    Called as preview frames are displayed. This callback is invoked on the event thread Camera.open(int) was called from.
+    Ref: https://developer.android.com/reference/android/hardware/Camera.PreviewCallback#:~:text=onPreviewFrame(byte%5B%5D%20data%2C%20Camera,as%20preview%20frames%20are%20displayed.
+     */
+
     /**
      * Callback for android.hardware.Camera API
      */
@@ -262,6 +272,11 @@ public abstract class CameraActivity extends AppCompatActivity
                 };
         processImage();
     }
+
+    /*
+    Callback that is called when a new image is available from ImageReader.
+    Ref: https://developer.android.com/reference/android/media/ImageReader.OnImageAvailableListener?hl=en
+     */
 
     /**
      * Callback for Camera2 API
@@ -413,7 +428,7 @@ public abstract class CameraActivity extends AppCompatActivity
             if (shouldShowRequestPermissionRationale(PERMISSION_CAMERA)) {
                 Toast.makeText(
                         CameraActivity.this,
-                        "Camera permission is required for this demo",
+                        "Camera permission is required for this application",
                         Toast.LENGTH_LONG)
                         .show();
             }
