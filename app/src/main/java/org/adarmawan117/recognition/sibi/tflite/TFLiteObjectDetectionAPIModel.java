@@ -462,6 +462,9 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         boolean kelingkingTerbuka = false;
         LOGGER.d("Punggung tangan joints = " + Arrays.toString(landmarks));
 
+        // Variable Angka 10
+        boolean angka10Jempol = landmarks[4].getX() > landmarks[2].getX();
+
         double pseudoFixKeyPoint = landmarks[2].getX(); //compare x
         if (landmarks[3].getX() < pseudoFixKeyPoint && landmarks[4].getX() < pseudoFixKeyPoint) {
             jempolTerbuka = true;
@@ -488,7 +491,7 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         }
 
         // Hand gesture recognition
-        if (jempolTerbuka && !telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
+        if (angka10Jempol && !telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
             return "10";
         }
 
