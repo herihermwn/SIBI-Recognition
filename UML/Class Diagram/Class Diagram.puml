@@ -1,0 +1,366 @@
+@startuml
+class org.adarmawan117.recognition.sibi.tflite.TFLiteObjectDetectionAPIModel {
+- {static} float[][] anchors
+- {static} Logger LOGGER
+- {static} int NUM_DETECTIONS
+- {static} float IMAGE_MEAN
+- {static} float IMAGE_STD
+- {static} int NUM_THREADS
+- boolean isModelQuantized
+- int inputSize
+- Vector<String> labels
+- int[] intValues
+- float[][][] outputReg
+- float[][][] outputClf
+- float[][] outputJoints
+- ByteBuffer imgData
+- ByteBuffer imgLandmarkData
+- Interpreter tfLite
+- Interpreter landmarkTfLite
+- {static} MappedByteBuffer loadModelFile(AssetManager,String)
++ {static} Classifier create(AssetManager,String,String,int,boolean)
++ List<Recognition> recognizeImage(Bitmap,Bitmap)
+~ {static} void transformMatrix(Mat,Matrix)
++ {static} float[][] getTriangle(float,float,float,float,float)
++ void setNumThreads(int)
++ void setUseNNAPI(boolean)
++ {static} String punggungTanganGesture(StructuredLandmarks[])
++ {static} String telapakTanganGesture(StructuredLandmarks[])
+~ StructuredLandmarks[] getStructuredLandmarks(float[])
+}
+class org.adarmawan117.recognition.sibi.customview.OverlayView {
+- List<DrawCallback> callbacks
++ void addCallback(DrawCallback)
++ void draw(Canvas)
+}
+interface org.adarmawan117.recognition.sibi.customview.OverlayView.DrawCallback {
++ void drawCallback(Canvas)
+}
+class org.adarmawan117.recognition.sibi.env.BorderedText {
+- Paint interiorPaint
+- Paint exteriorPaint
+- float textSize
++ void setTypeface(Typeface)
++ void drawText(Canvas,float,float,String)
++ void drawText(Canvas,float,float,String,Paint)
++ void drawLines(Canvas,float,float,Vector<String>)
++ void setInteriorColor(int)
++ void setExteriorColor(int)
++ float getTextSize()
++ void setAlpha(int)
++ void getTextBounds(String,int,int,Rect)
++ void setTextAlign(Align)
+}
+abstract class org.adarmawan117.recognition.sibi.CameraActivity {
+- {static} Logger LOGGER
+- {static} int PERMISSIONS_REQUEST
+- {static} String PERMISSION_CAMERA
+# int previewWidth
+# int previewHeight
+# int delay
+# boolean isRecord
+- boolean debug
+- Handler handler
+- HandlerThread handlerThread
+- boolean useCamera2API
+- boolean isProcessingFrame
+- byte[][] yuvBytes
+- int[] rgbBytes
+- int yRowStride
+- Runnable postInferenceCallback
+- Runnable imageConverter
+- LinearLayout bottomSheetLayout
+- LinearLayout gestureLayout
+- BottomSheetBehavior sheetBehavior
+# FabBottomNavigationView bottomSheetArrowImageView
+- ImageView plusImageView
+- SwitchCompat apiSwitchCompat
+- TextView delayTextView
+- TextView gestureTitle
+- FloatingActionButton recordButton
+~ String hasil
+# void onCreate(Bundle)
+# int[] getRgbBytes()
++ void onPreviewFrame(byte[],Camera)
++ void onImageAvailable(ImageReader)
++ void onStart()
++ void onResume()
++ void onPause()
++ void onStop()
++ void onDestroy()
+# void runInBackground(Runnable)
++ void onRequestPermissionsResult(int,String[],int[])
+- {static} boolean allPermissionsGranted(int[])
+- boolean hasPermission()
+- void requestPermission()
+- boolean isHardwareLevelSupported(CameraCharacteristics,int)
+- String chooseCamera()
+# void setFragment()
+# void fillBytes(Plane[],byte[][])
++ boolean isDebug()
+# void readyForNextImage()
+# int getScreenOrientation()
++ void onCheckedChanged(CompoundButton,boolean)
++ void onClick(View)
+# void setGestureTitle(String)
+# {abstract}void processImage()
+# {abstract}void onPreviewSizeChosen(Size,int)
+# {abstract}int getLayoutId()
+# {abstract}Size getDesiredPreviewFrameSize()
+# {abstract}void setUseNNAPI(boolean)
+}
+interface org.adarmawan117.recognition.sibi.customview.ResultsView {
++ void setResults(List<Recognition>)
+}
+interface org.adarmawan117.recognition.sibi.tflite.Classifier {
+~ List<Recognition> recognizeImage(Bitmap,Bitmap)
+~ void setNumThreads(int)
+~ void setUseNNAPI(boolean)
+}
+class org.adarmawan117.recognition.sibi.tflite.Classifier.Recognition {
+- int id
+- String title
+- Float confidence
+- RectF location
++ int getId()
++ String getTitle()
++ Float getConfidence()
++ RectF getLocation()
++ void setLocation(RectF)
++ String toString()
+}
+class org.adarmawan117.recognition.sibi.env.Size {
++ {static} long serialVersionUID
++ int width
++ int height
++ {static} Size getRotatedSize(Size,int)
++ {static} Size parseFromString(String)
++ {static} List<Size> sizeStringToList(String)
++ {static} String sizeListToString(List<Size>)
++ {static} String dimensionsAsString(int,int)
++ float aspectRatio()
++ int compareTo(Size)
++ boolean equals(Object)
++ int hashCode()
++ String toString()
+}
+class org.adarmawan117.recognition.sibi.CameraConnectionFragment {
+- {static} Logger LOGGER
+- {static} int MINIMUM_PREVIEW_SIZE
+- {static} SparseIntArray ORIENTATIONS
+- {static} String FRAGMENT_DIALOG
+- Semaphore cameraOpenCloseLock
+- OnImageAvailableListener imageListener
+- Size inputSize
+- int layout
+- ConnectionCallback cameraConnectionCallback
+- CameraCaptureSession.CaptureCallback captureCallback
+- String cameraId
+- AutoFitTextureView textureView
+- CameraCaptureSession captureSession
+- CameraDevice cameraDevice
+- Integer sensorOrientation
+- Size previewSize
+- HandlerThread backgroundThread
+- Handler backgroundHandler
+- ImageReader previewReader
+- CaptureRequest.Builder previewRequestBuilder
+- CaptureRequest previewRequest
+- CameraDevice.StateCallback stateCallback
+- TextureView.SurfaceTextureListener surfaceTextureListener
+# {static} Size chooseOptimalSize(Size[],int,int)
++ {static} CameraConnectionFragment newInstance(ConnectionCallback,OnImageAvailableListener,int,Size)
+- void showToast(String)
++ View onCreateView(LayoutInflater,ViewGroup,Bundle)
++ void onViewCreated(View,Bundle)
++ void onActivityCreated(Bundle)
++ void onResume()
++ void onPause()
++ void setCamera(String)
+- void setUpCameraOutputs()
+- void openCamera(int,int)
+- void closeCamera()
+- void startBackgroundThread()
+- void stopBackgroundThread()
+- void createCameraPreviewSession()
+- void configureTransform(int,int)
+}
+interface org.adarmawan117.recognition.sibi.CameraConnectionFragment.ConnectionCallback {
+~ void onPreviewSizeChosen(Size,int)
+}
+class org.adarmawan117.recognition.sibi.CameraConnectionFragment.CompareSizesByArea {
++ int compare(Size,Size)
+}
+class org.adarmawan117.recognition.sibi.CameraConnectionFragment.ErrorDialog {
+- {static} String ARG_MESSAGE
++ {static} ErrorDialog newInstance(String)
++ Dialog onCreateDialog(Bundle)
+}
+class org.adarmawan117.recognition.sibi.env.Logger {
+- {static} String DEFAULT_TAG
+- {static} int DEFAULT_MIN_LOG_LEVEL
+- {static} Set<String> IGNORED_CLASS_NAMES
+- String tag
+- String messagePrefix
+- int minLogLevel
+- {static} String getCallerSimpleName()
++ void setMinLogLevel(int)
++ boolean isLoggable(int)
+- String toMessage(String,Object)
++ void v(String,Object)
++ void v(Throwable,String,Object)
++ void d(String,Object)
++ void d(Throwable,String,Object)
++ void i(String,Object)
++ void i(Throwable,String,Object)
++ void w(String,Object)
++ void w(Throwable,String,Object)
++ void e(String,Object)
++ void e(Throwable,String,Object)
+}
+class org.adarmawan117.recognition.sibi.LegacyCameraConnectionFragment {
+- {static} Logger LOGGER
+- {static} SparseIntArray ORIENTATIONS
+- Camera camera
+- Camera.PreviewCallback imageListener
+- Size desiredSize
+- int layout
+- AutoFitTextureView textureView
+- TextureView.SurfaceTextureListener surfaceTextureListener
+- HandlerThread backgroundThread
++ View onCreateView(LayoutInflater,ViewGroup,Bundle)
++ void onViewCreated(View,Bundle)
++ void onActivityCreated(Bundle)
++ void onResume()
++ void onPause()
+- void startBackgroundThread()
+- void stopBackgroundThread()
+# void stopCamera()
+- int getCameraId()
+}
+class org.adarmawan117.recognition.sibi.tracking.MultiBoxTracker {
+- {static} Logger LOGGER
+- {static} float TEXT_SIZE_DIP
+- {static} float MIN_SIZE
+- {static} int[] COLORS
+~ List<Pair<Float,RectF>> screenRects
+- Logger logger
+- Queue<Integer> availableColors
+- List<TrackedRecognition> trackedObjects
+- Paint boxPaint
+- float textSizePx
+- BorderedText borderedText
+- Matrix frameToCanvasMatrix
+- int frameWidth
+- int frameHeight
+- int sensorOrientation
++ void setFrameConfiguration(int,int,int)
++ void drawDebug(Canvas)
++ void trackResults(List<Recognition>)
+- Matrix getFrameToCanvasMatrix()
++ void draw(Canvas)
+- void processResults(List<Recognition>)
+}
+class org.adarmawan117.recognition.sibi.tracking.MultiBoxTracker.TrackedRecognition {
+~ int id
+~ RectF location
+~ float detectionConfidence
+~ int color
+~ String title
+}
+class org.adarmawan117.recognition.sibi.DetectorActivity {
+- {static} Logger LOGGER
+- {static} int TF_OD_API_INPUT_SIZE
+- {static} boolean TF_OD_API_IS_QUANTIZED
+- {static} String TF_OD_API_MODEL_FILE
+- {static} String TF_OD_API_LABELS_FILE
+- {static} DetectorMode MODE
+- {static} float MINIMUM_CONFIDENCE_TF_OD_API
+- {static} boolean MAINTAIN_ASPECT
+- {static} Size DESIRED_PREVIEW_SIZE
+- {static} boolean SAVE_PREVIEW_BITMAP
+- {static} float TEXT_SIZE_DIP
+~ OverlayView trackingOverlay
+- Integer sensorOrientation
+- Classifier detector
+- long lastProcessingTimeMs
+- Bitmap rgbFrameBitmap
+- Bitmap croppedBitmap
+- Bitmap cropCopyBitmap
+- boolean computingDetection
+- long timestamp
+- Matrix frameToCropTransform
+- Matrix cropToFrameTransform
+- MultiBoxTracker tracker
+- BorderedText borderedText
++ void onPreviewSizeChosen(Size,int)
+# void processImage()
+# int getLayoutId()
+# Size getDesiredPreviewFrameSize()
+# void setUseNNAPI(boolean)
+}
+class org.adarmawan117.recognition.sibi.env.StructuredLandmarks {
+- double x
+- double y
++ double getX()
++ double getY()
+}
+class org.adarmawan117.recognition.sibi.env.ImageUtils {
+~ {static} int kMaxChannelValue
+- {static} Logger LOGGER
++ {static} int getYUVByteSize(int,int)
++ {static} void saveBitmap(Bitmap)
++ {static} void saveBitmap(Bitmap,String)
++ {static} void convertYUV420SPToARGB8888(byte[],int,int,int[])
+- {static} int YUV2RGB(int,int,int)
++ {static} void convertYUV420ToARGB8888(byte[],byte[],byte[],int,int,int,int,int,int[])
++ {static} Matrix getTransformationMatrix(int,int,int,int,int,boolean)
++ {static} Matrix getTransformationMatrixContain(int,int,int,int,int,boolean)
+}
+class org.adarmawan117.recognition.sibi.customview.AutoFitTextureView {
+- int ratioWidth
+- int ratioHeight
++ void setAspectRatio(int,int)
+# void onMeasure(int,int)
+}
+class org.adarmawan117.recognition.sibi.Splashscreen {
+# void onCreate(Bundle)
+- void moveActivity()
+}
+class org.adarmawan117.recognition.sibi.customview.RecognitionScoreView {
+- {static} float TEXT_SIZE_DIP
+- float textSizePx
+- Paint fgPaint
+- Paint bgPaint
+- List<Recognition> results
++ void setResults(List<Recognition>)
++ void onDraw(Canvas)
+}
+
+
+org.adarmawan117.recognition.sibi.tflite.Classifier <|.. org.adarmawan117.recognition.sibi.tflite.TFLiteObjectDetectionAPIModel
+android.view.View <|-- org.adarmawan117.recognition.sibi.customview.OverlayView
+org.adarmawan117.recognition.sibi.customview.OverlayView +.. org.adarmawan117.recognition.sibi.customview.OverlayView.DrawCallback
+android.media.ImageReader.OnImageAvailableListener <|.. org.adarmawan117.recognition.sibi.CameraActivity
+org.adarmawan117.recognition.sibi.PreviewCallback <|.. org.adarmawan117.recognition.sibi.CameraActivity
+org.adarmawan117.recognition.sibi.OnCheckedChangeListener <|.. org.adarmawan117.recognition.sibi.CameraActivity
+org.adarmawan117.recognition.sibi.OnClickListener <|.. org.adarmawan117.recognition.sibi.CameraActivity
+androidx.appcompat.app.AppCompatActivity <|-- org.adarmawan117.recognition.sibi.CameraActivity
+org.adarmawan117.recognition.sibi.tflite.Classifier +.. org.adarmawan117.recognition.sibi.tflite.Classifier.Recognition
+org.adarmawan117.recognition.sibi.env.Comparable <|.. org.adarmawan117.recognition.sibi.env.Size
+java.io.Serializable <|.. org.adarmawan117.recognition.sibi.env.Size
+android.app.Fragment <|-- org.adarmawan117.recognition.sibi.CameraConnectionFragment
+org.adarmawan117.recognition.sibi.CameraConnectionFragment +.. org.adarmawan117.recognition.sibi.CameraConnectionFragment.ConnectionCallback
+org.adarmawan117.recognition.sibi.CameraConnectionFragment +.. org.adarmawan117.recognition.sibi.CameraConnectionFragment.CompareSizesByArea
+org.adarmawan117.recognition.sibi.Comparator <|.. org.adarmawan117.recognition.sibi.CameraConnectionFragment.CompareSizesByArea
+org.adarmawan117.recognition.sibi.CameraConnectionFragment +.. org.adarmawan117.recognition.sibi.CameraConnectionFragment.ErrorDialog
+org.adarmawan117.recognition.sibi.DialogFragment <|-- org.adarmawan117.recognition.sibi.CameraConnectionFragment.ErrorDialog
+android.app.Fragment <|-- org.adarmawan117.recognition.sibi.LegacyCameraConnectionFragment
+org.adarmawan117.recognition.sibi.tracking.MultiBoxTracker +.. org.adarmawan117.recognition.sibi.tracking.MultiBoxTracker.TrackedRecognition
+android.media.ImageReader.OnImageAvailableListener <|.. org.adarmawan117.recognition.sibi.DetectorActivity
+org.adarmawan117.recognition.sibi.CameraActivity <|-- org.adarmawan117.recognition.sibi.DetectorActivity
+android.view.TextureView <|-- org.adarmawan117.recognition.sibi.customview.AutoFitTextureView
+androidx.appcompat.app.AppCompatActivity <|-- org.adarmawan117.recognition.sibi.Splashscreen
+org.adarmawan117.recognition.sibi.customview.ResultsView <|.. org.adarmawan117.recognition.sibi.customview.RecognitionScoreView
+android.view.View <|-- org.adarmawan117.recognition.sibi.customview.RecognitionScoreView
+@enduml

@@ -23,6 +23,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.os.Trace;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -39,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Vector;
+
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint2f;
@@ -87,6 +89,9 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
 
     private Interpreter landmarkTfLite;
 
+    private TFLiteObjectDetectionAPIModel() {
+    }
+
     /**
      * Memory-map the model file in Assets.
      */
@@ -111,8 +116,8 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
      */
     public static Classifier create(
             final AssetManager assetManager,
-            final String modelFilename,
-            final String labelFilename,
+            final String modelFilename, // "palm_detection_without_custom_op.tflite";
+            final String labelFilename, // "palm_detection_labelmap.txt";
             final int inputSize,
             final boolean isQuantized)
             throws IOException {
@@ -131,7 +136,7 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         d.inputSize = inputSize;
 
         try {
-            d.tfLite = new Interpreter(loadModelFile(assetManager, modelFilename));
+            d.tfLite = new Interpreter(loadModelFile(assetManager, modelFilename)); // "palm_detection_without_custom_op.tflite";
             d.landmarkTfLite = new Interpreter(loadModelFile(assetManager, "hand_landmark.tflite"));
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -159,7 +164,7 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         try (Scanner scanner = new Scanner(assetManager.open("anchors.csv"));) {
             int x = 0;
             while (scanner.hasNextLine()) {
-                // records.add(getRecordFromLine());
+//        records.add(getRecordFromLine());
                 String[] cols = scanner.nextLine().split(",");
                 anchors[x++] = new float[]{Float.parseFloat(cols[0]), Float.parseFloat(cols[1]), Float.parseFloat(cols[2]), Float.parseFloat(cols[3])};
             }
@@ -313,12 +318,13 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         transformMatrix(mtrr, mMtr);
         float[] range = {1, 0, 0, 0, 1, 0, 0, 0, 1};
         mMtr.mapPoints(range);
+        LOGGER.d("mMtr = " + Arrays.toString(range));
         Matrix mRot = new Matrix();
         mRot.postRotate(90);
         mRot.postTranslate(oribmp.getHeight() + ((oribmp.getWidth() - oribmp.getHeight()) / 2f), 0);
 
         // make bitmap for original bitmap 1280*720 to 1280*1280 pad image
-        // Bitmap origBitmap = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory()+"/"+Environment.DIRECTORY_DCIM+"/20200203_204820.jpg");
+//    Bitmap origBitmap = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory()+"/"+Environment.DIRECTORY_DCIM+"/20200203_204820.jpg");
         Bitmap origBitmap = oribmp;
         Bitmap bitmapPad = Bitmap.createBitmap(1280, 1280, Bitmap.Config.ARGB_8888);
         Bitmap affineBitmap = Bitmap.createBitmap(256, 256, Bitmap.Config.ARGB_8888);
@@ -329,7 +335,7 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         final Canvas applyAffineCanvas = new Canvas(affineBitmap);
         applyAffineCanvas.drawBitmap(bitmapPad, mMtr, null);
 
-        // store imglandmark as byte buffer for tensorflow
+// store imglandmark as byte buffer for tensorflow
         affineBitmap.getPixels(intValues, 0, 256, 0, 0, 256, 256);
         imgData.rewind();
         for (int i = 0; i < inputSize; ++i) {
@@ -401,10 +407,14 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         float x = kp2_x - kp0_x;
         float y = kp2_y - kp0_y;
 
+        LOGGER.d("kp2 - kp0 = " + x + ", " + y);
+
         //    cal matrix norm
         float[][] dir_v = new float[1][2];
         dir_v[0][0] = x / (float) (Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)));
         dir_v[0][1] = y / (float) (Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)));
+
+        LOGGER.d("norm " + (Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2))));
 
         float[][] rotate = new float[2][2]; //R90.T
         rotate[0][0] = 0f;
@@ -481,24 +491,26 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
             kelingkingTerbuka = true;
         }
 
-        // Hand gesture recognition
-        if (!jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && jariManisTerbuka && kelingkingTerbuka) {
-            return "5";
-        } else if (jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && jariManisTerbuka && kelingkingTerbuka) {
-            return "4";
-        } else if (!jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
-            return "3";
-        } else if (jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
-            return "2";
-        } else if (jempolTerbuka && telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
-            return "1";
-        } else if (!jempolTerbuka && !telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
-            return "0";
-        }
+        // masukkan logic hand gesture recognition disini
 
-        return "Gesture tidak di kenali";
+        return "";
     }
 
+    /*
+            LANDMARK TANGAN
+
+               jari tengah
+    jari manis     12        telunjuk
+         16        11         8
+   20      15      10       7      jempol
+     19      14     9     6        4
+       18      13       5       3
+         17                  2
+
+                       1
+                   0
+
+     */
     public static String telapakTanganGesture(StructuredLandmarks[] landmarks) {
         // finger states
         boolean jempolTerbuka = false;
@@ -506,7 +518,7 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         boolean jariTengahTerbuka = false;
         boolean jariManisTerbuka = false;
         boolean kelingkingTerbuka = false;
-        LOGGER.d("Telapak tangan joints = " + Arrays.toString(landmarks));
+        //LOGGER.d("Telapak tangan joints = " + Arrays.toString(landmarks));
 
         double pseudoFixKeyPoint = landmarks[2].getX(); //compare x
         if (landmarks[3].getX() < pseudoFixKeyPoint && landmarks[4].getX() < pseudoFixKeyPoint) {
@@ -540,31 +552,17 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
 //        LOGGER.d("Test : X8 " + landmarks[8].getX());
 //        LOGGER.d("Test : Y8 " + landmarks[8].getY());
 
-//        LOGGER.d("Status: Jempol => " + jempolTerbuka + " :: Telunjuk => " + telunjukTerbuka + " :: Jari Tengah => " + jariTengahTerbuka + " :: Jari Manis => " + jariManisTerbuka + " :: Kelingking => " + kelingkingTerbuka +
-//                "\nJempol      : " + landmarks[2].getX() + " :: " + landmarks[3].getX() + " :: " + landmarks[4].getX() +
-//                "\nTelunjuk    : " + landmarks[6].getX() + " :: " + landmarks[7].getX() + " :: " + landmarks[8].getX() +
-//                "\nJari Tengah : " + landmarks[10].getX() + " :: " + landmarks[11].getX() + " :: " + landmarks[12].getX() +
-//                "\nJari Manis  : " + landmarks[14].getX() + " :: " + landmarks[15].getX() + " :: " + landmarks[16].getX() +
-//                "\nKelingking  : " + landmarks[18].getX() + " :: " + landmarks[16].getX() + " :: " + landmarks[20].getX());
+//        LOGGER.d("Jempol terbuka      : "+ jempolTerbuka);
+//        LOGGER.d("Telunjuk terbuka    : "+ telunjukTerbuka);
+//        LOGGER.d("Jari Tengah terbuka : "+ jariTengahTerbuka);
+//        LOGGER.d("Jari Manis terbuka  : "+ jariManisTerbuka);
+//        LOGGER.d("Kelingking terbuka  : "+ kelingkingTerbuka);
 
+        // testing untuk angka 6 - 9
+        LOGGER.d("Landmark 4: "+ landmarks[4].getX());
+        LOGGER.d("Landmark 20: "+ landmarks[20].getX());
 
         // Hand gesture recognition
-        double jempol = landmarks[2].getX();
-        double telunjuk = landmarks[6].getX();
-        double jariTengah = landmarks[10].getX();
-        double jariManis = landmarks[14].getX();
-        double kelingking = landmarks[18].getX();
-
-//        if (
-//                (jempol     >= 51 && jempol     <= 163) &&
-//                (telunjuk   >= 27 && telunjuk   <= 55) &&
-//                (jariTengah >= 99 && jariTengah <= 129) &&
-//                (jariManis  >= 81 && jariManis  <= 109) &&
-//                (kelingking >= 68 && kelingking <= 91)
-//        ) {
-//            return "A";
-        LOGGER.d("Jempol      : "+ (jempol     >= 51 && jempol     <= 163)+ "\nTelunjuk    : "+ (telunjuk   >= 27 && telunjuk   <= 55)+ "\nJari Tengah : "+ (jariTengah >= 99 && jariTengah <= 129)+ "\nJari Manis  : "+ (jariManis  >= 81 && jariManis  <= 109)+ "\nKelingking  : "+ (kelingking >= 68 && kelingking <= 91));
-
         if (!jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && jariManisTerbuka && kelingkingTerbuka) {
             return "5";
         } else if (jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && jariManisTerbuka && kelingkingTerbuka) {
@@ -578,7 +576,7 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         } else if (!jempolTerbuka && telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
             return "A";
         }
-        return "Gesture tidak di kenali";
+        return " ";
     }
 
     // fungsi untuk filter koordinat x dan y
