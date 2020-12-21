@@ -25,6 +25,15 @@ import android.graphics.RectF;
 import android.os.Trace;
 import android.util.Log;
 
+import org.adarmawan117.recognition.sibi.env.Logger;
+import org.adarmawan117.recognition.sibi.env.StructuredLandmarks;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.Point;
+import org.opencv.imgproc.Imgproc;
+import org.tensorflow.lite.Interpreter;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -41,14 +50,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Vector;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.Point;
-import org.opencv.imgproc.Imgproc;
-import org.tensorflow.lite.Interpreter;
-import org.adarmawan117.recognition.sibi.env.Logger;
-import org.adarmawan117.recognition.sibi.env.StructuredLandmarks;
 
 /**
  * Wrapper for frozen detection models trained using the Tensorflow Object Detection API:
@@ -512,7 +513,12 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         boolean angka7Jempol = landmarks[4].getX() < landmarks[9].getX();
 
         // Variable Angka 8
+        boolean angka8Tengah = landmarks[12].getY() > landmarks[5].getY();
         boolean angka8Jempol = landmarks[4].getX() < landmarks[8].getX();
+
+        // Variable Angka 9
+        boolean angka9Telunjuk = landmarks[8].getY() > landmarks[5].getY();
+        boolean angka9Jempol = landmarks[4].getX() < landmarks[3].getX();
 
         double pseudoFixKeyPoint = landmarks[2].getX(); //compare x
         if (landmarks[3].getX() < pseudoFixKeyPoint && landmarks[4].getX() < pseudoFixKeyPoint) {
@@ -524,7 +530,7 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
             telunjukTerbuka = true;
         }
 
-        pseudoFixKeyPoint = landmarks[10].getY(); //compare y
+        pseudoFixKeyPoint = landmarks[9].getY(); //compare y
         if (landmarks[11].getY() < pseudoFixKeyPoint && landmarks[12].getY() < pseudoFixKeyPoint) {
             jariTengahTerbuka = true;
         }
@@ -542,6 +548,8 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         // Hand gesture recognition
         if (!jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && jariManisTerbuka && kelingkingTerbuka) {
             return "5";
+        } else if (angka8Jempol && angka8Tengah && jariManisTerbuka && kelingkingTerbuka && telunjukTerbuka) {
+            return "8";
         } else if (jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && jariManisTerbuka && kelingkingTerbuka) {
             return "4";
         } else if (!jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
@@ -556,8 +564,8 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
             return "6";
         } else if (angka7Jempol && angka7Manis && kelingkingTerbuka && jariTengahTerbuka && telunjukTerbuka) {
             return "7";
-        } else if (angka8Jempol && jariManisTerbuka && kelingkingTerbuka && !jariTengahTerbuka && telunjukTerbuka) {
-            return "8";
+        } else if (angka9Jempol && angka9Telunjuk && jariTengahTerbuka && jariManisTerbuka && kelingkingTerbuka) {
+            return "9";
         }
 
         return "Gesture tidak di kenali";
