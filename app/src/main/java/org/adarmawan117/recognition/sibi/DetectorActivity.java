@@ -35,6 +35,7 @@ import java.util.List;
 import org.adarmawan117.recognition.sibi.customview.OverlayView;
 import org.adarmawan117.recognition.sibi.customview.OverlayView.DrawCallback;
 import org.adarmawan117.recognition.sibi.env.BorderedText;
+import org.adarmawan117.recognition.sibi.env.GestureType;
 import org.adarmawan117.recognition.sibi.env.ImageUtils;
 import org.adarmawan117.recognition.sibi.env.Logger;
 import org.adarmawan117.recognition.sibi.tflite.Classifier;
@@ -101,6 +102,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                             TF_OD_API_LABELS_FILE,
                             TF_OD_API_INPUT_SIZE,
                             TF_OD_API_IS_QUANTIZED);
+
             cropSize = TF_OD_API_INPUT_SIZE;
         } catch (final IOException e) {
             e.printStackTrace();
@@ -147,6 +149,10 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     @Override
     protected void processImage() {
         trackingOverlay.postInvalidate();
+
+        GestureType type = (switchGesture.isChecked()) ? GestureType.HURUF : GestureType.ANGKA;
+
+        detector.setGestureType(type);
 
         rgbFrameBitmap.setPixels(getRgbBytes(), 0, previewWidth, 0, 0, previewWidth, previewHeight);
 

@@ -17,6 +17,9 @@ package org.adarmawan117.recognition.sibi.tflite;
 
 import android.graphics.Bitmap;
 import android.graphics.RectF;
+
+import org.adarmawan117.recognition.sibi.env.GestureType;
+
 import java.util.List;
 
 /** Generic interface for interacting with different recognition engines. */
@@ -27,7 +30,10 @@ public interface Classifier {
 
   void setUseNNAPI(boolean isChecked);
 
-  /** An immutable result returned by a Classifier describing what was recognized. */
+  void setGestureType(GestureType gestureType);
+
+
+    /** An immutable result returned by a Classifier describing what was recognized. */
   public class Recognition {
     /**
      * A unique identifier for what has been recognized. Specific to the class, not the instance of

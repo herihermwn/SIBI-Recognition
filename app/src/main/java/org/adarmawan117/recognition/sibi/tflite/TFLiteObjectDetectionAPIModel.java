@@ -23,6 +23,8 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.os.Trace;
+
+import org.adarmawan117.recognition.sibi.env.GestureType;
 import org.adarmawan117.recognition.sibi.env.Logger;
 import org.adarmawan117.recognition.sibi.env.StructuredLandmarks;
 import org.opencv.core.CvType;
@@ -53,6 +55,7 @@ import java.util.Vector;
  * Wrapper for frozen detection models trained using the Tensorflow Object Detection API:
  * github.com/tensorflow/models/tree/master/research/object_detection
  */
+
 public class TFLiteObjectDetectionAPIModel implements Classifier {
     private static float[][] anchors = new float[2944][4];
     private static final Logger LOGGER = new Logger();
@@ -72,6 +75,7 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
     private int[] intValues;
     private float[][][] outputReg = new float[1][2944][18];
     private float[][][] outputClf = new float[1][2944][1];
+    private GestureType gestureType = GestureType.ANGKA;
 
     /*
     variabel outputJoints = kordinat tangan dari objek yang sudah terdeteksi (campuran)
@@ -366,10 +370,18 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         StructuredLandmarks[] landmarks = getStructuredLandmarks(outputJoints[0]);
 
         //
-        if (outputJoints[0][4] < outputJoints[0][34]) { //
-            gesture = punggungTanganGesture(landmarks);
-        } else {
-            gesture = telapakTanganGesture(landmarks);
+        if (gestureType == GestureType.ANGKA) {
+            if (outputJoints[0][4] < outputJoints[0][34]) { //
+                gesture = punggungTanganGestureAngka(landmarks);
+            } else {
+                gesture = telapakTanganGestureAngka(landmarks);
+            }
+        } else  if (gestureType == GestureType.HURUF) {
+            if (outputJoints[0][4] < outputJoints[0][34]) { //
+                gesture = punggungTanganGestureHuruf(landmarks);
+            } else {
+                gesture = telapakTanganGestureHuruf(landmarks);
+            }
         }
 
         recognitions.add(new Recognition(2, gesture, (float) (1 / (1 + Math.exp(-outputClf[0][clf_max_idx][0]))), new RectF(
@@ -456,14 +468,95 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         if (tfLite != null) setUseNNAPI(isChecked);
     }
 
-    public static String punggungTanganGesture(StructuredLandmarks[] landmarks) {
+
+    public static String punggungTanganGestureHuruf(StructuredLandmarks[] landmarks) {
         // finger states
-        boolean jempolTerbuka = false;        // jempol
+        boolean jempolTerbuka = false;
         boolean telunjukTerbuka = false;
         boolean jariTengahTerbuka = false;
         boolean jariManisTerbuka = false;
         boolean kelingkingTerbuka = false;
-        LOGGER.d("Punggung tangan joints = " + Arrays.toString(landmarks));
+        LOGGER.d("Punggung tangan huruf joints = " + Arrays.toString(landmarks));
+
+        double pseudoFixKeyPoint = landmarks[2].getX(); //compare x
+        if (landmarks[3].getX() < pseudoFixKeyPoint && landmarks[4].getX() < pseudoFixKeyPoint) {
+            jempolTerbuka = true;
+        }
+
+        pseudoFixKeyPoint = landmarks[6].getY(); //compare y
+        if (landmarks[7].getY() < pseudoFixKeyPoint && landmarks[8].getY() < pseudoFixKeyPoint) {
+            telunjukTerbuka = true;
+        }
+
+        pseudoFixKeyPoint = landmarks[10].getY(); //compare y
+        if (landmarks[11].getY() < pseudoFixKeyPoint && landmarks[12].getY() < pseudoFixKeyPoint) {
+            jariTengahTerbuka = true;
+        }
+
+        pseudoFixKeyPoint = landmarks[14].getY(); //compare y
+        if (landmarks[15].getY() < pseudoFixKeyPoint && landmarks[16].getY() < pseudoFixKeyPoint) {
+            jariManisTerbuka = true;
+        }
+
+        pseudoFixKeyPoint = landmarks[18].getY(); //compare y
+        if (landmarks[19].getY() < pseudoFixKeyPoint && landmarks[20].getY() < pseudoFixKeyPoint) {
+            kelingkingTerbuka = true;
+        }
+
+        // Hand gesture recognition
+
+
+        return "";
+    }
+
+    public static String telapakTanganGestureHuruf(StructuredLandmarks[] landmarks) {
+        // finger states
+        boolean jempolTerbuka = false;
+        boolean telunjukTerbuka = false;
+        boolean jariTengahTerbuka = false;
+        boolean jariManisTerbuka = false;
+        boolean kelingkingTerbuka = false;
+        LOGGER.d("Punggung tangan huruf joints = " + Arrays.toString(landmarks));
+
+        double pseudoFixKeyPoint = landmarks[2].getX(); //compare x
+        if (landmarks[3].getX() < pseudoFixKeyPoint && landmarks[4].getX() < pseudoFixKeyPoint) {
+            jempolTerbuka = true;
+        }
+
+        pseudoFixKeyPoint = landmarks[6].getY(); //compare y
+        if (landmarks[7].getY() < pseudoFixKeyPoint && landmarks[8].getY() < pseudoFixKeyPoint) {
+            telunjukTerbuka = true;
+        }
+
+        pseudoFixKeyPoint = landmarks[10].getY(); //compare y
+        if (landmarks[11].getY() < pseudoFixKeyPoint && landmarks[12].getY() < pseudoFixKeyPoint) {
+            jariTengahTerbuka = true;
+        }
+
+        pseudoFixKeyPoint = landmarks[14].getY(); //compare y
+        if (landmarks[15].getY() < pseudoFixKeyPoint && landmarks[16].getY() < pseudoFixKeyPoint) {
+            jariManisTerbuka = true;
+        }
+
+        pseudoFixKeyPoint = landmarks[18].getY(); //compare y
+        if (landmarks[19].getY() < pseudoFixKeyPoint && landmarks[20].getY() < pseudoFixKeyPoint) {
+            kelingkingTerbuka = true;
+        }
+
+        // Hand gesture recognition
+
+
+        return "";
+    }
+
+    public static String punggungTanganGestureAngka(StructuredLandmarks[] landmarks) {
+        // finger states
+        boolean jempolTerbuka = false;
+        boolean telunjukTerbuka = false;
+        boolean jariTengahTerbuka = false;
+        boolean jariManisTerbuka = false;
+        boolean kelingkingTerbuka = false;
+        LOGGER.d("Punggung tangan angka joints = " + Arrays.toString(landmarks));
 
         // Variable Angka 10
         boolean angka10Jempol = landmarks[4].getX() > landmarks[2].getX();
@@ -501,14 +594,14 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         return "";
     }
 
-    public static String telapakTanganGesture(StructuredLandmarks[] landmarks) {
+    public static String telapakTanganGestureAngka(StructuredLandmarks[] landmarks) {
         // finger states
         boolean jempolTerbuka = false;
         boolean telunjukTerbuka = false;
         boolean jariTengahTerbuka = false;
         boolean jariManisTerbuka = false;
         boolean kelingkingTerbuka = false;
-        LOGGER.d("Telapak tangan joints = " + Arrays.toString(landmarks));
+        LOGGER.d("Telapak tangan angka joints = " + Arrays.toString(landmarks));
 
         // Variable Angka 6
         boolean angka6Kelingking = landmarks[4].getX() < landmarks[13].getX();
@@ -595,4 +688,8 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         return structuredLandmarks;
     }
 
+    @Override
+    public void setGestureType(GestureType gestureType) {
+        this.gestureType = gestureType;
+    }
 }

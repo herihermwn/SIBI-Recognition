@@ -60,6 +60,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.adarmawan117.recognition.sibi.customview.FabBottomNavigationView;
+import org.adarmawan117.recognition.sibi.env.GestureType;
 import org.adarmawan117.recognition.sibi.env.ImageUtils;
 import org.adarmawan117.recognition.sibi.env.Logger;
 import org.adarmawan117.recognition.sibi.view.AboutActivity;
@@ -100,6 +101,7 @@ public abstract class CameraActivity
     private BottomSheetBehavior sheetBehavior;
 
     private ImageView plusImageView, minusImageView;
+    public SwitchCompat switchGesture;
     private SwitchCompat apiSwitchCompat;
     private TextView delayTextView;
     private TextView gestureTitle;
@@ -133,6 +135,7 @@ public abstract class CameraActivity
         delayTextView = findViewById(R.id.delay);
         plusImageView = findViewById(R.id.plus);
         minusImageView = findViewById(R.id.minus);
+        switchGesture = findViewById(R.id.switchGesture);
         apiSwitchCompat = findViewById(R.id.api_info_switch);
         bottomSheetLayout = findViewById(R.id.bottom_sheet_layout);
         gestureLayout = findViewById(R.id.gesture_layout);
@@ -584,7 +587,7 @@ public abstract class CameraActivity
 
     @SuppressLint("SetTextI18n")
     protected void setGestureTitle(String title) {
-        gestureTitle.setText("Gesture : "+title);
+        gestureTitle.setText("Gesture : " + title);
     }
 
     protected abstract void processImage();
