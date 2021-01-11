@@ -58,17 +58,20 @@ import androidx.appcompat.widget.SwitchCompat;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.type.DateTime;
 
 import org.adarmawan117.recognition.sibi.customview.FabBottomNavigationView;
-import org.adarmawan117.recognition.sibi.env.GestureType;
 import org.adarmawan117.recognition.sibi.env.ImageUtils;
 import org.adarmawan117.recognition.sibi.env.Logger;
 import org.adarmawan117.recognition.sibi.view.AboutActivity;
+import org.adarmawan117.recognition.sibi.view.TextToSpeechActivity;
 import org.adarmawan117.recognition.sibi.view.category.CategoryActivity;
 import org.opencv.android.OpenCVLoader;
 
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 public abstract class CameraActivity
         extends AppCompatActivity                 // onCreate()
@@ -83,8 +86,10 @@ public abstract class CameraActivity
     private static final String PERMISSION_CAMERA = Manifest.permission.CAMERA;
     protected int previewWidth = 0;
     protected int previewHeight = 0;
-    protected int delay = 2;
-    protected boolean isRecord = false;
+    private int delay = 2;
+    private boolean isRecord = false;
+    private String recordedGesture = "";
+    private Date lastRecorded = new Date();
     private boolean debug = false;
     private Handler handler;
     private HandlerThread handlerThread;
@@ -495,13 +500,10 @@ public abstract class CameraActivity
         if (useCamera2API) {
             CameraConnectionFragment camera2Fragment =
                     CameraConnectionFragment.newInstance(
-                            new CameraConnectionFragment.ConnectionCallback() {
-                                @Override
-                                public void onPreviewSizeChosen(final Size size, final int rotation) {
-                                    previewHeight = size.getHeight();
-                                    previewWidth = size.getWidth();
-                                    CameraActivity.this.onPreviewSizeChosen(size, rotation);
-                                }
+                            (size, rotation) -> {
+                                previewHeight = size.getHeight();
+                                previewWidth = size.getWidth();
+                                CameraActivity.this.onPreviewSizeChosen(size, rotation);
                             },
                             this,
                             getLayoutId(),
@@ -533,6 +535,13 @@ public abstract class CameraActivity
         return debug;
     }
 
+    private long diffTwoTime(Date d1) {
+        Date d2 = new Date();
+        long seconds = (d2.getTime()-d1.getTime())/1000;
+
+        return seconds;
+    }
+
     protected void readyForNextImage() {
         if (postInferenceCallback != null) {
             postInferenceCallback.run();
@@ -562,18 +571,16 @@ public abstract class CameraActivity
     @Override
     public void onClick(View v) {
         String delayText = delayTextView.getText().toString().trim();
-        int delayInt = Integer.parseInt(delayText);
+        delay = Integer.parseInt(delayText);
 
         if (v.getId() == R.id.plus) {
-            if (delayInt >= 9) return;
-            delayInt++;
-            delayTextView.setText(String.valueOf(delayInt));
-            delay = delayInt;
+            if (delay >= 9) return;
+            delay++;
+            delayTextView.setText(String.valueOf(delay));
         } else if (v.getId() == R.id.minus) {
-            if (delayInt == 1) return;
-            delayInt--;
-            delayTextView.setText(String.valueOf(delayInt));
-            delay = delayInt;
+            if (delay == 2) return;
+            delay--;
+            delayTextView.setText(String.valueOf(delay));
         } else if (v.getId() == R.id.recordButton) {
             isRecord = !isRecord;
 
@@ -581,13 +588,27 @@ public abstract class CameraActivity
                 recordButton.setImageResource(R.drawable.ic_stop);
             } else {
                 recordButton.setImageResource(R.drawable.ic_play);
+
+                // Move Page and Send text
+                Intent categoryIntent = new Intent(CameraActivity.this, TextToSpeechActivity.class);
+                startActivity(categoryIntent);
+                finish();
             }
         }
     }
 
     @SuppressLint("SetTextI18n")
     protected void setGestureTitle(String title) {
-        gestureTitle.setText("Gesture : " + title);
+        if (isRecord) {
+            if (diffTwoTime(lastRecorded) >= delay) {
+                lastRecorded = new Date();
+                recordedGesture = recordedGesture + title;
+                gestureTitle.setText("Gesture : " + recordedGesture);
+            }
+        } else {
+            recordedGesture = title;
+            gestureTitle.setText("Gesture : " + title);
+        }
     }
 
     protected abstract void processImage();
