@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 
-import org.adarmawan117.recognition.sibi.DetectorActivity;
 import org.adarmawan117.recognition.sibi.R;
 
 public class Splashscreen extends AppCompatActivity {
@@ -25,7 +24,7 @@ public class Splashscreen extends AppCompatActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent moveIntent = new Intent(Splashscreen.this, DetectorActivity.class);
+                Intent moveIntent = new Intent(Splashscreen.this, SpeechToTextActivity.class);
                 startActivity(moveIntent);
                 finish();
             }

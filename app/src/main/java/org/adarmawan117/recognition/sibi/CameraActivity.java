@@ -58,19 +58,16 @@ import androidx.appcompat.widget.SwitchCompat;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.type.DateTime;
 
 import org.adarmawan117.recognition.sibi.customview.FabBottomNavigationView;
 import org.adarmawan117.recognition.sibi.env.ImageUtils;
 import org.adarmawan117.recognition.sibi.env.Logger;
 import org.adarmawan117.recognition.sibi.view.AboutActivity;
-import org.adarmawan117.recognition.sibi.view.TextToSpeechActivity;
 import org.adarmawan117.recognition.sibi.view.category.CategoryActivity;
 import org.opencv.android.OpenCVLoader;
 
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 public abstract class CameraActivity
@@ -228,11 +225,6 @@ public abstract class CameraActivity
         imageConverter.run();
         return rgbBytes;
     }
-
-    /*
-    Called as preview frames are displayed. This callback is invoked on the event thread Camera.open(int) was called from.
-    Ref: https://developer.android.com/reference/android/hardware/Camera.PreviewCallback#:~:text=onPreviewFrame(byte%5B%5D%20data%2C%20Camera,as%20preview%20frames%20are%20displayed.
-     */
 
     /**
      * Callback for android.hardware.Camera API
@@ -588,11 +580,6 @@ public abstract class CameraActivity
                 recordButton.setImageResource(R.drawable.ic_stop);
             } else {
                 recordButton.setImageResource(R.drawable.ic_play);
-
-                // Move Page and Send text
-                Intent categoryIntent = new Intent(CameraActivity.this, TextToSpeechActivity.class);
-                startActivity(categoryIntent);
-                finish();
             }
         }
     }
