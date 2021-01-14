@@ -24,7 +24,7 @@ public class Splashscreen extends AppCompatActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent moveIntent = new Intent(Splashscreen.this, SpeechToTextActivity.class);
+                Intent moveIntent = new Intent(Splashscreen.this, HomeActivity.class);
                 startActivity(moveIntent);
                 finish();
             }

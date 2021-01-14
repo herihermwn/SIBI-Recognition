@@ -42,6 +42,7 @@ import org.adarmawan117.recognition.sibi.tflite.Classifier;
 import org.adarmawan117.recognition.sibi.tflite.TFLiteObjectDetectionAPIModel;
 import org.adarmawan117.recognition.sibi.tracking.MultiBoxTracker;
 
+
 /**
  * An activity that uses a TensorFlowMultiBoxDetector and ObjectTracker to detect and then track
  * objects.

@@ -11,8 +11,6 @@ import androidx.core.content.ContextCompat;
 
 import org.adarmawan117.recognition.sibi.R;
 
-import java.util.Locale;
-
 public class SpeechToTextActivity extends AppCompatActivity {
     public static final Integer RecordAudioRequestCode = 1;
 
