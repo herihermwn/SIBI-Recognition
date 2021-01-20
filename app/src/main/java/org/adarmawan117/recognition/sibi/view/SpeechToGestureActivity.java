@@ -1,22 +1,20 @@
 package org.adarmawan117.recognition.sibi.view;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
-import android.speech.SpeechRecognizer;
-import android.text.Editable;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,8 +23,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.adarmawan117.recognition.sibi.R;
 
@@ -37,7 +33,13 @@ public class SpeechToGestureActivity extends AppCompatActivity implements View.O
 
     public static final Integer RecordAudioRequestCode = 1;
     private EditText resultSpeech;
-    private ImageView backButton;
+    private ImageView backButton, plusDelayButton, minusDelayButton;
+    private LinearLayout pasteButton, clearButton;
+    private TextView delayText;
+    private Button showGesture;
+    private ClipboardManager clipBoard;
+
+    private int delay = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,16 +50,33 @@ public class SpeechToGestureActivity extends AppCompatActivity implements View.O
     }
 
     private void init() {
+
+        // Inisialisasi View
+        ImageButton speechButton = findViewById(R.id.speechButton);
+        resultSpeech = findViewById(R.id.resultSpeech);
+        backButton = findViewById(R.id.back_button);
+        pasteButton = findViewById(R.id.paste_button);
+        clearButton = findViewById(R.id.clear_button);
+        delayText = findViewById(R.id.delay);
+        plusDelayButton = findViewById(R.id.plus);
+        minusDelayButton = findViewById(R.id.minus);
+        showGesture = findViewById(R.id.show_gesture);
+        clipBoard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+
+        // Set event onClick
+        speechButton.setOnClickListener(this);
+        backButton.setOnClickListener(this);
+        pasteButton.setOnClickListener(this);
+        clearButton.setOnClickListener(this);
+        plusDelayButton.setOnClickListener(this);
+        minusDelayButton.setOnClickListener(this);
+        showGesture.setOnClickListener(this);
+
+        // Meminta perizinan mengakses mic
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             checkPermission();
         }
 
-        ImageButton speechButton = findViewById(R.id.speechButton);
-        resultSpeech = findViewById(R.id.resultSpeech);
-        backButton = findViewById(R.id.back_button);
-
-        speechButton.setOnClickListener(this);
-        backButton.setOnClickListener(this);
     }
 
     private void checkPermission() {
@@ -82,9 +101,9 @@ public class SpeechToGestureActivity extends AppCompatActivity implements View.O
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == RecordAudioRequestCode && grantResults.length > 0 ){
-            if(grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                Toast.makeText(this,"Permintaan di izinkan",Toast.LENGTH_SHORT).show();
+        if (requestCode == RecordAudioRequestCode && grantResults.length > 0) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                Toast.makeText(this, "Permintaan di izinkan", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -95,7 +114,33 @@ public class SpeechToGestureActivity extends AppCompatActivity implements View.O
                 finish();
                 break;
 
-            case R.id.speechButton :
+            case R.id.plus:
+                // Menambahkan delay, dengan batas maksimal 9
+                if (delay >= 9) return;
+                delay++;
+                delayText.setText(String.valueOf(delay));
+                break;
+
+            case R.id.minus:
+                // Mengurangi delay, dengan batas minimal 2
+                if (delay == 2) return;
+                delay--;
+                delayText.setText(String.valueOf(delay));
+                break;
+
+            case R.id.clear_button:
+                resultSpeech.setText("");
+                break;
+
+            case R.id.paste_button:
+                // Mendapatkan text yang di salin
+                ClipData clipData = clipBoard.getPrimaryClip();
+                ClipData.Item item = clipData.getItemAt(0);
+                String text = item.getText().toString();
+                resultSpeech.setText(text);
+                break;
+
+            case R.id.speechButton:
                 Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
                 intent.putExtra(
                         RecognizerIntent.EXTRA_LANGUAGE_MODEL,
@@ -109,6 +154,10 @@ public class SpeechToGestureActivity extends AppCompatActivity implements View.O
                 } else {
                     Toast.makeText(getApplicationContext(), "Perangkat tidak mendukung text to speech", Toast.LENGTH_SHORT).show();
                 }
+                break;
+
+            case R.id.show_gesture:
+                // TODO: Add Action to fragment and play photo sequentially
                 break;
 
         }
