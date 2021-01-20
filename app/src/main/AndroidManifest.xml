@@ -21,7 +21,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".view.HomeActivity"></activity>
-        <activity android:name=".view.SpeechToTextActivity" />
+        <activity android:name=".view.SpeechToGestureActivity" />
         <activity android:name=".view.category.CategoryActivity" />
         <activity android:name=".view.AboutActivity" />
         <activity

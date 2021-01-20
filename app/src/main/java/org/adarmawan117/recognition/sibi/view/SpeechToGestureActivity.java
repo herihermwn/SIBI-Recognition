@@ -33,7 +33,7 @@ import org.adarmawan117.recognition.sibi.R;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class SpeechToTextActivity extends AppCompatActivity implements View.OnClickListener {
+public class SpeechToGestureActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static final Integer RecordAudioRequestCode = 1;
     private EditText resultSpeech;

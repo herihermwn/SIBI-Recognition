@@ -31,8 +31,6 @@ public class AboutActivity extends AppCompatActivity {
     }
 
     private void backToMain() {
-        Intent moveIntent = new Intent(AboutActivity.this, DetectorActivity.class);
-        startActivity(moveIntent);
         finish();
     }
 }
