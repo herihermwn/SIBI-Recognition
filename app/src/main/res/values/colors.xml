@@ -5,4 +5,5 @@
     <color name="colorAccent">#425066</color>
     <color name="bottom_bar">@color/colorPrimaryDark</color>
     <color name="grey">#3A3A3A</color>
+    <color name="yellowTransparent">#B0FFA800</color>
 </resources>
