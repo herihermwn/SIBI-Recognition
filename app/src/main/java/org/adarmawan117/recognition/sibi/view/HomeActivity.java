@@ -15,7 +15,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     LinearLayout speechToText;
     LinearLayout gestureToText;
-    ImageView infoButton;
+    LinearLayout infoButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +24,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         speechToText = findViewById(R.id.speechToGestureLayout);
         gestureToText = findViewById(R.id.gestureToTextLayout);
-        infoButton = findViewById(R.id.info_button);
+        infoButton = findViewById(R.id.aboutAppsLayout);
 
         speechToText.setOnClickListener(this);
         gestureToText.setOnClickListener(this);
