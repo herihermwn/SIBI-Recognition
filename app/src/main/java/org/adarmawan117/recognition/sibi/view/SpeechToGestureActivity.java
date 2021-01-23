@@ -96,7 +96,7 @@ public class SpeechToGestureActivity extends AppCompatActivity implements View.O
         if (requestCode == 101) {
             if (resultCode == Activity.RESULT_OK && data != null) {
                 ArrayList<String> listResult = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                String result = resultSpeech.getText().toString() + listResult.get(0);
+                String result = resultSpeech.getText().toString() + " " + listResult.get(0);
                 resultSpeech.setText(result);
             }
         }
@@ -169,7 +169,7 @@ public class SpeechToGestureActivity extends AppCompatActivity implements View.O
                 }
                 else if (lengthResult > 0) {
                     // Run background
-                    Runnable r = () -> textToGesture();
+                    Runnable r = this::textToGesture;
                     new Thread(r).start();
                 } else {
                     showSnackbar("Input tidak boleh kosong", true);
