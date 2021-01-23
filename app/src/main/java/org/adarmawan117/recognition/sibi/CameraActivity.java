@@ -20,7 +20,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.hardware.camera2.CameraAccessException;
@@ -38,7 +37,6 @@ import android.os.HandlerThread;
 import android.os.Trace;
 import android.util.Size;
 import android.view.Gravity;
-import android.view.MenuItem;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +49,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 
@@ -62,8 +59,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import org.adarmawan117.recognition.sibi.customview.FabBottomNavigationView;
 import org.adarmawan117.recognition.sibi.env.ImageUtils;
 import org.adarmawan117.recognition.sibi.env.Logger;
-import org.adarmawan117.recognition.sibi.view.AboutActivity;
-import org.adarmawan117.recognition.sibi.view.category.CategoryActivity;
 import org.opencv.android.OpenCVLoader;
 
 import java.lang.reflect.Field;
@@ -102,7 +97,7 @@ public abstract class CameraActivity
     private LinearLayout gestureLayout;
     private BottomSheetBehavior sheetBehavior;
 
-    private ImageView plusImageView, minusImageView;
+    private ImageView plusImageView, minusImageView, backButton;
     public SwitchCompat switchGesture;
     private SwitchCompat apiSwitchCompat;
     private TextView delayTextView;
@@ -137,6 +132,7 @@ public abstract class CameraActivity
         delayTextView = findViewById(R.id.delay);
         plusImageView = findViewById(R.id.plus);
         minusImageView = findViewById(R.id.minus);
+        backButton = findViewById(R.id.back_button);
         switchGesture = findViewById(R.id.switchGesture);
         apiSwitchCompat = findViewById(R.id.api_info_switch);
         bottomSheetLayout = findViewById(R.id.bottom_sheet_layout);
@@ -163,29 +159,11 @@ public abstract class CameraActivity
         adjustGravity(fabBottomNavigationView);
         adjustWidth(fabBottomNavigationView);
 
-        fabBottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.nav_tentang:
-                        Intent tentangIntent = new Intent(CameraActivity.this, AboutActivity.class);
-                        startActivity(tentangIntent);
-                        finish();
-                        return true;
-                    case R.id.nav_category:
-                        Intent categoryIntent = new Intent(CameraActivity.this, CategoryActivity.class);
-                        startActivity(categoryIntent);
-                        finish();
-                        return true;
-                }
-                return false;
-            }
-        });
-
         apiSwitchCompat.setOnCheckedChangeListener(this);
         recordButton.setOnClickListener(this);
         plusImageView.setOnClickListener(this);
         minusImageView.setOnClickListener(this);
+        backButton.setOnClickListener(this);
     }
 
     private static void adjustGravity(View v) {
@@ -529,7 +507,7 @@ public abstract class CameraActivity
 
     private long diffTwoTime(Date d1) {
         Date d2 = new Date();
-        long seconds = (d2.getTime()-d1.getTime())/1000;
+        long seconds = (d2.getTime() - d1.getTime()) / 1000;
 
         return seconds;
     }
@@ -565,23 +543,34 @@ public abstract class CameraActivity
         String delayText = delayTextView.getText().toString().trim();
         delay = Integer.parseInt(delayText);
 
-        if (v.getId() == R.id.plus) {
-            if (delay >= 9) return;
-            delay++;
-            delayTextView.setText(String.valueOf(delay));
-        } else if (v.getId() == R.id.minus) {
-            if (delay == 2) return;
-            delay--;
-            delayTextView.setText(String.valueOf(delay));
-        } else if (v.getId() == R.id.recordButton) {
-            isRecord = !isRecord;
+        switch (v.getId()) {
+            case R.id.plus:
+                if (delay >= 9) return;
+                delay++;
+                delayTextView.setText(String.valueOf(delay));
+                break;
 
-            if (isRecord) {
-                recordButton.setImageResource(R.drawable.ic_stop);
-            } else {
-                recordButton.setImageResource(R.drawable.ic_play);
-            }
+            case R.id.minus:
+                if (delay == 2) return;
+                delay--;
+                delayTextView.setText(String.valueOf(delay));
+                break;
+
+            case R.id.recordButton:
+                isRecord = !isRecord;
+
+                if (isRecord) {
+                    recordButton.setImageResource(R.drawable.ic_stop);
+                } else {
+                    recordButton.setImageResource(R.drawable.ic_play);
+                }
+                break;
+
+            case R.id.back_button:
+                finish();
+                break;
         }
+
     }
 
     @SuppressLint("SetTextI18n")
@@ -590,11 +579,11 @@ public abstract class CameraActivity
             if (diffTwoTime(lastRecorded) >= delay) {
                 lastRecorded = new Date();
                 recordedGesture = recordedGesture + title;
-                gestureTitle.setText("Gesture : " + recordedGesture);
+                gestureTitle.setText(recordedGesture);
             }
         } else {
             recordedGesture = title;
-            gestureTitle.setText("Gesture : " + title);
+            gestureTitle.setText(title);
         }
     }
 
