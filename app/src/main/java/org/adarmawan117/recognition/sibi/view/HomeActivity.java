@@ -44,7 +44,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(gestureToTextIntent);
                 break;
 
-            case R.id.info_button:
+            case R.id.aboutAppsLayout:
                 Intent aboutIntent = new Intent(HomeActivity.this, AboutActivity.class);
                 startActivity(aboutIntent);
                 break;

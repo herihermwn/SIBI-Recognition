@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,6 +25,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import org.adarmawan117.recognition.sibi.R;
 
 import java.util.ArrayList;
@@ -33,12 +36,12 @@ public class SpeechToGestureActivity extends AppCompatActivity implements View.O
 
     public static final Integer RecordAudioRequestCode = 1;
     private EditText resultSpeech;
-    private ImageView backButton, plusDelayButton, minusDelayButton;
+    private ImageView backButton, plusDelayButton, minusDelayButton, gestureImage;
     private LinearLayout pasteButton, clearButton;
     private TextView delayText;
     private Button showGesture;
     private ClipboardManager clipBoard;
-
+    private boolean playGesture = false;
     private int delay = 2;
 
     @Override
@@ -52,8 +55,9 @@ public class SpeechToGestureActivity extends AppCompatActivity implements View.O
     private void init() {
 
         // Inisialisasi View
-        ImageButton speechButton = findViewById(R.id.speechButton);
-        resultSpeech = findViewById(R.id.resultSpeech);
+        ImageButton speechButton = findViewById(R.id.speech_button);
+        resultSpeech = findViewById(R.id.result_speech);
+        gestureImage = findViewById(R.id.gesture_image);
         backButton = findViewById(R.id.back_button);
         pasteButton = findViewById(R.id.paste_button);
         clearButton = findViewById(R.id.clear_button);
@@ -140,7 +144,7 @@ public class SpeechToGestureActivity extends AppCompatActivity implements View.O
                 resultSpeech.setText(text);
                 break;
 
-            case R.id.speechButton:
+            case R.id.speech_button:
                 Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
                 intent.putExtra(
                         RecognizerIntent.EXTRA_LANGUAGE_MODEL,
@@ -152,14 +156,72 @@ public class SpeechToGestureActivity extends AppCompatActivity implements View.O
                 if (intent.resolveActivity(getPackageManager()) != null) {
                     startActivityForResult(intent, 101);
                 } else {
-                    Toast.makeText(getApplicationContext(), "Perangkat tidak mendukung text to speech", Toast.LENGTH_SHORT).show();
+                    showSnackbar("Perangkat tidak mendukung text to speech", true);
                 }
                 break;
 
             case R.id.show_gesture:
-                // TODO: Add Action to fragment and play photo sequentially
+                int lengthResult = resultSpeech.getText().toString().length();
+
+                // Check lenght input
+                if (playGesture) {
+                    showSnackbar("Sedang menjalankan gesture, mohon tunggu hingga selesai", true);
+                }
+                else if (lengthResult > 0) {
+                    // Run background
+                    Runnable r = () -> textToGesture();
+                    new Thread(r).start();
+                } else {
+                    showSnackbar("Input tidak boleh kosong", true);
+                }
                 break;
 
         }
+    }
+
+    private void showSnackbar(String message, boolean warnNotif) {
+        int colorId = android.R.color.holo_green_dark;
+        if (warnNotif) {
+            colorId = android.R.color.holo_red_light;
+        }
+        Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG)
+                .setBackgroundTint(getResources().getColor(colorId))
+                .show();
+    }
+
+    private void textToGesture() {
+        playGesture = true;
+        // Remove all except alphabet & number
+        String result = resultSpeech.getText().toString().trim().replaceAll("[^a-zA-Z0-9]", " ");
+        // Remove 2 or more space
+        result = result.replaceAll(" +", " ");
+
+        for (int i = 0; i < result.length(); i++) {
+            try {
+                int id = 0;
+
+                // check if input space
+                if (' ' == result.charAt(i)) {
+                    id = this.getResources().getIdentifier("huruf_spasi", "drawable", this.getPackageName());
+                } else {
+                    id = this.getResources().getIdentifier("huruf_" + result.charAt(i), "drawable", this.getPackageName());
+                }
+
+                // Set image need use main thread
+                int finalId = id;
+                runOnUiThread(() -> gestureImage.setImageResource(finalId));
+
+                // Check last loop
+                if (i != result.length() - 1) {
+                    Thread.sleep(delay * 1000);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Show snackbar
+        showSnackbar("Gesture telah selesai", false);
+        playGesture = false;
     }
 }
