@@ -42,7 +42,7 @@ public class SpeechToGestureActivity extends AppCompatActivity implements View.O
     private Button showGesture;
     private ClipboardManager clipBoard;
     private boolean playGesture = false;
-    private int delay = 2;
+    private double delay = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,16 +119,16 @@ public class SpeechToGestureActivity extends AppCompatActivity implements View.O
                 break;
 
             case R.id.plus:
-                // Menambahkan delay, dengan batas maksimal 9
-                if (delay >= 9) return;
-                delay++;
+                // Menambahkan delay, dengan batas maksimal 5
+                if (delay >= 5) return;
+                delay += 0.5;
                 delayText.setText(String.valueOf(delay));
                 break;
 
             case R.id.minus:
-                // Mengurangi delay, dengan batas minimal 2
-                if (delay == 2) return;
-                delay--;
+                // Mengurangi delay, dengan batas minimal 0.5 detik
+                if (delay == 0.5) return;
+                delay -= 0.5;
                 delayText.setText(String.valueOf(delay));
                 break;
 
@@ -213,7 +213,7 @@ public class SpeechToGestureActivity extends AppCompatActivity implements View.O
 
                 // Check last loop
                 if (i != result.length() - 1) {
-                    Thread.sleep(delay * 1000);
+                    Thread.sleep((long) (delay * 1000));
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
