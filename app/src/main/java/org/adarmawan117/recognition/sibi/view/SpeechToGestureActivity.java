@@ -204,7 +204,7 @@ public class SpeechToGestureActivity extends AppCompatActivity implements View.O
                 if (' ' == result.charAt(i)) {
                     id = this.getResources().getIdentifier("huruf_spasi", "drawable", this.getPackageName());
                 } else {
-                    id = this.getResources().getIdentifier("huruf_" + result.charAt(i), "drawable", this.getPackageName());
+                    id = this.getResources().getIdentifier("gesture_" + result.charAt(i), "drawable", this.getPackageName());
                 }
 
                 // Set image need use main thread
