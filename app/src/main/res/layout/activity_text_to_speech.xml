@@ -197,17 +197,31 @@
         android:layout_width="match_parent"
         android:layout_height="250dp"
         android:src="@drawable/gesture_a"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/show_gesture"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/speech_button" />
 
+    <TextView
+        android:id="@+id/gesture_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Belum menjalankan gesture"
+        android:textAlignment="center"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/gesture_image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/speech_button" />
+
     <Button
         android:id="@+id/show_gesture"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/colorPrimary"
         android:background="@drawable/round_button_noshadow"
+        android:backgroundTint="@color/colorPrimary"
         android:text="Jalankan Gesture"
         android:textAllCaps="false"
         android:textColor="@color/grey"

@@ -9,7 +9,6 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -38,7 +37,7 @@ public class SpeechToGestureActivity extends AppCompatActivity implements View.O
     private EditText resultSpeech;
     private ImageView backButton, plusDelayButton, minusDelayButton, gestureImage;
     private LinearLayout pasteButton, clearButton;
-    private TextView delayText;
+    private TextView delayText, gestureText;
     private Button showGesture;
     private ClipboardManager clipBoard;
     private boolean playGesture = false;
@@ -65,6 +64,7 @@ public class SpeechToGestureActivity extends AppCompatActivity implements View.O
         plusDelayButton = findViewById(R.id.plus);
         minusDelayButton = findViewById(R.id.minus);
         showGesture = findViewById(R.id.show_gesture);
+        gestureText = findViewById(R.id.gesture_text);
         clipBoard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
 
         // Set event onClick
@@ -166,8 +166,7 @@ public class SpeechToGestureActivity extends AppCompatActivity implements View.O
                 // Check lenght input
                 if (playGesture) {
                     showSnackbar("Sedang menjalankan gesture, mohon tunggu hingga selesai", true);
-                }
-                else if (lengthResult > 0) {
+                } else if (lengthResult > 0) {
                     // Run background
                     Runnable r = this::textToGesture;
                     new Thread(r).start();
@@ -198,27 +197,35 @@ public class SpeechToGestureActivity extends AppCompatActivity implements View.O
 
         for (int i = 0; i < result.length(); i++) {
             try {
-                int id = 0;
 
                 // check if input space
                 if (' ' == result.charAt(i)) {
-                    id = this.getResources().getIdentifier("huruf_spasi", "drawable", this.getPackageName());
+                    runOnUiThread(() -> {
+                        gestureText.setText("Spasi");
+                        gestureImage.setVisibility(View.INVISIBLE);
+                    });
                 } else {
-                    id = this.getResources().getIdentifier("gesture_" + result.charAt(i), "drawable", this.getPackageName());
+                    int id = this.getResources().getIdentifier("gesture_" + result.charAt(i), "drawable", this.getPackageName());
+                    String finalResult = result;
+                    int finalI = i;
+                    runOnUiThread(() -> {
+                        gestureText.setText("Gesture " + finalResult.charAt(finalI));
+                        gestureImage.setImageResource(id);
+                        gestureImage.setVisibility(View.VISIBLE);
+                    });
                 }
 
-                // Set image need use main thread
-                int finalId = id;
-                runOnUiThread(() -> gestureImage.setImageResource(finalId));
-
-                // Check last loop
-                if (i != result.length() - 1) {
-                    Thread.sleep((long) (delay * 1000));
-                }
+                // Create delay looping
+                Thread.sleep((long) (delay * 1000));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
+
+        runOnUiThread(() -> {
+            gestureImage.setVisibility(View.INVISIBLE);
+            gestureText.setText("Gesture telah selesai");
+        });
 
         // Show snackbar
         showSnackbar("Gesture telah selesai", false);
