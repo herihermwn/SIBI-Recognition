@@ -513,13 +513,20 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
 
     public static String telapakTanganGestureHuruf(StructuredLandmarks[] landmarks) {
         // finger states
-        boolean jempolTerbuka = false;
-        boolean telunjukTerbuka = false;
-        boolean jariTengahTerbuka = false;
-        boolean jariManisTerbuka = false;
-        boolean kelingkingTerbuka = false;
-//        LOGGER.d("Telapak tangan huruf joints = " + Arrays.toString(landmarks));
+        boolean jempolTerbuka      = false;
+        boolean telunjukTerbuka    = false;
+        boolean jariTengahTerbuka  = false;
+        boolean jariManisTerbuka   = false;
+        boolean kelingkingTerbuka  = false;
 
+        boolean jempolHorizontal      = landmarks[4].getX()  < landmarks[2].getX();
+        boolean telunjukHorizontal    = landmarks[8].getX()  < landmarks[5].getX();
+        boolean jariTengahHorizontal  = landmarks[12].getX() < landmarks[9].getX();
+        boolean jariManisHorizontal   = landmarks[16].getX() < landmarks[13].getX();
+        boolean kelingkingHorizontal  = landmarks[20].getX() < landmarks[17].getX();
+
+        boolean gestureR = landmarks[8].getX() < landmarks[12].getX();
+        boolean gestureS = landmarks[4].getX() < landmarks[6].getX();
         double pseudoFixKeyPoint = landmarks[2].getX(); //compare x
         if (landmarks[3].getX() > pseudoFixKeyPoint && landmarks[4].getX() > pseudoFixKeyPoint) {
             jempolTerbuka = true;
@@ -548,6 +555,43 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         // Hand gesture recognition
         if (jempolTerbuka && !telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
             return "A";
+        } else if (jempolHorizontal && telunjukTerbuka && jariTengahTerbuka && jariManisTerbuka && kelingkingTerbuka) {
+            return "B";
+        } else if (jempolHorizontal && telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
+            return "D";
+        } else if (jempolHorizontal && !telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
+            return "E";
+        } else if (jempolHorizontal && !telunjukTerbuka && jariTengahTerbuka && jariManisTerbuka && kelingkingTerbuka) {
+            return "F";
+        } else if (jempolHorizontal && telunjukHorizontal && jariTengahHorizontal && !jariManisHorizontal && !kelingkingHorizontal) {
+            return "H";
+        } else if (jempolHorizontal && !telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && kelingkingTerbuka) {
+            return "I";
+        } else if (jempolHorizontal && !telunjukHorizontal && !jariTengahHorizontal && !jariManisHorizontal && kelingkingHorizontal) {
+            return "J";
+        } else if (jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
+            return "K";
+        } else if (jempolTerbuka && telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
+            return "L";
+        }
+//        else if (!telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
+//            return "M";
+//        }
+//        else if (jempolHorizontal && telunjukTerbuka && jariTengahTerbuka && jariManisTerbuka && kelingkingTerbuka) {
+//            return "N";
+//        }
+        else if (gestureR && jempolHorizontal && !jariManisTerbuka && !kelingkingTerbuka) {
+            return "R";
+//        } else if (jempolHorizontal && gestureS && !telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
+//            return "S";
+        } else if (jempolHorizontal && telunjukTerbuka && jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
+            return "U";
+//        } else if (jempolHorizontal && jariTengahHorizontal && telunjukTerbuka && jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
+//            return "V";
+        } else if (jempolHorizontal && telunjukTerbuka && jariTengahTerbuka && jariManisTerbuka && !kelingkingTerbuka) {
+            return "W";
+        }  else if (jempolTerbuka && !telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && kelingkingTerbuka) {
+            return "Y";
         }
 
         return "";
