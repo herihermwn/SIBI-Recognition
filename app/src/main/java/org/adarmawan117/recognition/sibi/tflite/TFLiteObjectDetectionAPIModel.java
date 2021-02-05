@@ -553,43 +553,6 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         return "";
     }
 
-    public static String punggungTanganGestureAngka(StructuredLandmarks[] landmarks) {
-        // finger states
-        boolean jempolTerbuka = false;
-        boolean telunjukTerbuka = false;
-        boolean jariTengahTerbuka = false;
-        boolean jariManisTerbuka = false;
-        boolean kelingkingTerbuka = false;
-        LOGGER.d("Punggung tangan angka joints = " + Arrays.toString(landmarks));
-
-        double pseudoFixKeyPoint = landmarks[2].getX(); //compare x
-        if (landmarks[3].getX() < pseudoFixKeyPoint && landmarks[4].getX() < pseudoFixKeyPoint) {
-            jempolTerbuka = true;
-        }
-
-        pseudoFixKeyPoint = landmarks[6].getY(); //compare y
-        if (landmarks[7].getY() < pseudoFixKeyPoint && landmarks[8].getY() < pseudoFixKeyPoint) {
-            telunjukTerbuka = true;
-        }
-
-        pseudoFixKeyPoint = landmarks[10].getY(); //compare y
-        if (landmarks[11].getY() < pseudoFixKeyPoint && landmarks[12].getY() < pseudoFixKeyPoint) {
-            jariTengahTerbuka = true;
-        }
-
-        pseudoFixKeyPoint = landmarks[14].getY(); //compare y
-        if (landmarks[15].getY() < pseudoFixKeyPoint && landmarks[16].getY() < pseudoFixKeyPoint) {
-            jariManisTerbuka = true;
-        }
-
-        pseudoFixKeyPoint = landmarks[18].getY(); //compare y
-        if (landmarks[19].getY() < pseudoFixKeyPoint && landmarks[20].getY() < pseudoFixKeyPoint) {
-            kelingkingTerbuka = true;
-        }
-
-        return "";
-    }
-
     public static String telapakTanganGestureAngka(StructuredLandmarks[] landmarks) {
         // finger states
         boolean jempolTerbuka = false;
