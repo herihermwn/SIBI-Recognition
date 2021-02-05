@@ -372,10 +372,7 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
 
         //
         if (gestureType == GestureType.ANGKA) {
-            if (outputJoints[0][4] < outputJoints[0][34]) { //
-                LOGGER.d("Punggung tangan gesture angka");
-                gesture = punggungTanganGestureAngka(landmarks);
-            } else {
+            if (outputJoints[0][4] > outputJoints[0][34]) {
                 gesture = telapakTanganGestureAngka(landmarks);
             }
         } else if (gestureType == GestureType.HURUF) {
