@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "472855700054",
+    "project_id": "sibi-recognition",
+    "storage_bucket": "sibi-recognition.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:472855700054:android:7de6ecdf0de1c08562d1f7",
+        "android_client_info": {
+          "package_name": "org.adarmawan117.recognition.sibi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "472855700054-afh79hldj89bkio9eries9c7p0vj9dbv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGW5GkfipVWWIh_kZmM3FoarIGC3-pY28"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "472855700054-afh79hldj89bkio9eries9c7p0vj9dbv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
