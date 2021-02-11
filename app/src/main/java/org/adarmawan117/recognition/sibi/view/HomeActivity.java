@@ -43,6 +43,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.gestureToTextLayout:
                 Intent gestureToTextIntent = new Intent(HomeActivity.this, DetectorActivity.class);
                 startActivity(gestureToTextIntent);
+                finish();
                 break;
 
             case R.id.aboutAppsLayout:

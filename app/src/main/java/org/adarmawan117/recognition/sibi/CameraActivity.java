@@ -20,6 +20,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.hardware.camera2.CameraAccessException;
@@ -59,6 +60,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import org.adarmawan117.recognition.sibi.customview.FabBottomNavigationView;
 import org.adarmawan117.recognition.sibi.env.ImageUtils;
 import org.adarmawan117.recognition.sibi.env.Logger;
+import org.adarmawan117.recognition.sibi.view.HomeActivity;
 import org.opencv.android.OpenCVLoader;
 
 import java.lang.reflect.Field;
@@ -256,6 +258,7 @@ public abstract class CameraActivity
     Callback that is called when a new image is available from ImageReader.
     Ref: https://developer.android.com/reference/android/media/ImageReader.OnImageAvailableListener?hl=en
      */
+
     /**
      * Callback for Camera2 API
      */
@@ -320,43 +323,6 @@ public abstract class CameraActivity
             return;
         }
         Trace.endSection();
-    }
-
-    @Override
-    public synchronized void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    public synchronized void onResume() {
-        super.onResume();
-        handlerThread = new HandlerThread("inference");
-        handlerThread.start();
-        handler = new Handler(handlerThread.getLooper());
-    }
-
-    @Override
-    public synchronized void onPause() {
-        handlerThread.quitSafely();
-        try {
-            handlerThread.join();
-            handlerThread = null;
-            handler = null;
-        } catch (final InterruptedException e) {
-            LOGGER.e(e, "Exception!");
-        }
-
-        super.onPause();
-    }
-
-    @Override
-    public synchronized void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    public synchronized void onDestroy() {
-        super.onDestroy();
     }
 
     protected synchronized void runInBackground(final Runnable r) {
@@ -559,10 +525,18 @@ public abstract class CameraActivity
                 break;
 
             case R.id.back_button:
-                finish();
+                this.onBackPressed();
                 break;
         }
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        Thread.currentThread().interrupt();
+        finish();
+        Intent gestureToTextIntent = new Intent(CameraActivity.this, HomeActivity.class);
+        startActivity(gestureToTextIntent);
     }
 
     @SuppressLint("SetTextI18n")
