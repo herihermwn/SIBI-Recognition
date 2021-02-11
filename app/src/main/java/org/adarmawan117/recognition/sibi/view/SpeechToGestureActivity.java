@@ -80,72 +80,6 @@ public class SpeechToGestureActivity extends AppCompatActivity implements View.O
 
     }
 
-    /* referensi : https://www.youtube.com/watch?v=zHgATbPcq04&ab_channel=AtifPervaiz */
-    private void speechButtonOnClickListener() {
-        /* https://developer.android.com/reference/android/speech/RecognizerIntent#ACTION_RECOGNIZE_SPEECH */
-        /*
-        Starts an activity that will prompt the user for speech and send it through a speech recognizer. The results will be returned via activity results (in Activity#onActivityResult, if you start the intent using Activity#startActivityForResult(Intent, int)), or forwarded via a PendingIntent if one is provided.
-        */
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(
-                RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
-        );
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.forLanguageTag("id-ID"));
-
-        // Check device support speech to text or not
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(intent, 101);
-        } else {
-            showSnackbar("Perangkat tidak mendukung text to speech", true);
-        }
-    }
-
-    private void backButtonOnClickListener() {
-        finish();
-    }
-
-    private void pasteButtonOnClickListener() {
-        // Mendapatkan text yang di salin
-        ClipData clipData = clipBoard.getPrimaryClip();
-        ClipData.Item item = clipData.getItemAt(0);
-        String text = item.getText().toString();
-        resultSpeech.setText(text);
-    }
-
-    private void clearButtonOnClickListener() {
-        resultSpeech.setText("");
-    }
-
-    private void plusDelayButtonOnClickListener() {
-        // Menambahkan delay, dengan batas maksimal 5
-        if (delay >= 5) return;
-        delay += 0.5;
-        delayText.setText(String.valueOf(delay));
-    }
-
-    private void minusDelayButtonOnClickListener() {
-        // Mengurangi delay, dengan batas minimal 0.5 detik
-        if (delay == 0.5) return;
-        delay -= 0.5;
-        delayText.setText(String.valueOf(delay));
-    }
-
-    private void showGestureOnClickListener() {
-        int lengthResult = resultSpeech.getText().toString().length();
-
-        if (playGesture) {
-            showSnackbar("Sedang menjalankan gesture, mohon tunggu hingga selesai", true);
-            // Check lenght input
-        } else if (lengthResult > 0) {
-            // Run background
-            Runnable r = this::textToGesture;
-            new Thread(r).start();
-        } else {
-            showSnackbar("Input tidak boleh kosong", true);
-        }
-    }
-
     private void checkPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, RecordAudioRequestCode);
@@ -255,10 +189,14 @@ public class SpeechToGestureActivity extends AppCompatActivity implements View.O
         playGesture = true;
         // Remove all except alphabet & number
         String result = resultSpeech.getText().toString().trim().replaceAll("[^a-zA-Z0-9]", " ");
+
         // Remove 2 or more space
         result = result.replaceAll(" +", " ");
 
-        for (int i = 0; i < result.length(); i++) {
+        // Make result to lower case
+        String lowerCaseResult = result.toLowerCase();
+
+        for (int i = 0; i < lowerCaseResult.length(); i++) {
             try {
 
                 // check if input space
@@ -268,7 +206,7 @@ public class SpeechToGestureActivity extends AppCompatActivity implements View.O
                         gestureImage.setVisibility(View.INVISIBLE);
                     });
                 } else {
-                    int id = this.getResources().getIdentifier("gesture_" + result.charAt(i), "drawable", this.getPackageName());
+                    int id = this.getResources().getIdentifier("gesture_" + lowerCaseResult.charAt(i), "drawable", this.getPackageName());
                     String finalResult = result;
                     int finalI = i;
                     runOnUiThread(() -> {
