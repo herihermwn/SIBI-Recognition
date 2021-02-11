@@ -3,4 +3,18 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <item
+        android:id="@+id/delay_info"
+        android:enabled="true"
+        android:title="2 detik" />
+
+    <item
+        android:enabled="false"
+        android:title="" />
+
+    <item
+        android:id="@+id/gesture_info"
+        android:enabled="true"
+        android:title="Angka" />
+
 </menu>

@@ -29,11 +29,8 @@ import android.media.ImageReader.OnImageAvailableListener;
 import android.util.Size;
 import android.util.TypedValue;
 import android.widget.Toast;
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
+
 import org.adarmawan117.recognition.sibi.customview.OverlayView;
-import org.adarmawan117.recognition.sibi.customview.OverlayView.DrawCallback;
 import org.adarmawan117.recognition.sibi.env.BorderedText;
 import org.adarmawan117.recognition.sibi.env.GestureType;
 import org.adarmawan117.recognition.sibi.env.ImageUtils;
@@ -41,6 +38,10 @@ import org.adarmawan117.recognition.sibi.env.Logger;
 import org.adarmawan117.recognition.sibi.tflite.Classifier;
 import org.adarmawan117.recognition.sibi.tflite.TFLiteObjectDetectionAPIModel;
 import org.adarmawan117.recognition.sibi.tracking.MultiBoxTracker;
+
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * An activity that uses a TensorFlowMultiBoxDetector and ObjectTracker to detect and then track
@@ -127,13 +128,10 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
         trackingOverlay = findViewById(R.id.tracking_overlay);
         trackingOverlay.addCallback(
-                new DrawCallback() {
-                    @Override
-                    public void drawCallback(final Canvas canvas) {
-                        tracker.draw(canvas);
-                        if (isDebug()) {
-                            tracker.drawDebug(canvas);
-                        }
+                canvas -> {
+                    tracker.draw(canvas);
+                    if (isDebug()) {
+                        tracker.drawDebug(canvas);
                     }
                 });
 
@@ -144,7 +142,14 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     protected void processImage() {
         trackingOverlay.postInvalidate();
 
-        GestureType type = (switchGesture.isChecked()) ? GestureType.HURUF : GestureType.ANGKA;
+        GestureType type;
+        if (switchGesture.isChecked()) {
+            type = GestureType.HURUF;
+            gestureInfo.setTitle("Huruf");
+        } else {
+            type = GestureType.ANGKA;
+            gestureInfo.setTitle("Angka");
+        }
 
         detector.setGestureType(type);
 

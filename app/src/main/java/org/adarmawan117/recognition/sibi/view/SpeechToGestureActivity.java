@@ -9,7 +9,6 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -222,12 +221,12 @@ public class SpeechToGestureActivity extends AppCompatActivity implements View.O
                         gestureImage.setVisibility(View.INVISIBLE);
                     });
                 } else if ('z' == lowerCaseResult.charAt(i)) {
+                    // Handle gesture z
                     runOnUiThread(() -> {
                         gestureText.setText("Gesture Z");
                     });
                     for (int j = 1; j <= 4; j++) {
                         int id = this.getResources().getIdentifier("gesture_z" + j, "drawable", this.getPackageName());
-                        Log.d("awe", "gesture_z" + j);
                         runOnUiThread(() -> {
                             gestureImage.setImageResource(id);
                             gestureImage.setVisibility(View.VISIBLE);

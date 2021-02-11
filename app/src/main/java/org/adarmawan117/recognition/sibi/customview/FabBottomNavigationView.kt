@@ -4,13 +4,12 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Paint
 import android.util.AttributeSet
-import android.view.MenuItem
+import android.util.Log
 import androidx.core.content.ContextCompat
 import com.google.android.material.bottomappbar.BottomAppBarTopEdgeTreatment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
-import org.adarmawan117.recognition.sibi.CameraActivity
 import org.adarmawan117.recognition.sibi.R
 
 @SuppressLint("RestrictedApi")
@@ -29,15 +28,15 @@ class FabBottomNavigationView @JvmOverloads constructor(
         fabSize = ta.getDimension(R.styleable.FabBottomNavigationView_fab_size, 0F)
         fabCradleMargin = ta.getDimension(R.styleable.FabBottomNavigationView_fab_cradle_margin, 0F)
         fabCradleRoundedCornerRadius =
-            ta.getDimension(R.styleable.FabBottomNavigationView_fab_cradle_rounded_corner_radius, 0F)
+                ta.getDimension(R.styleable.FabBottomNavigationView_fab_cradle_rounded_corner_radius, 0F)
         cradleVerticalOffset = ta.getDimension(R.styleable.FabBottomNavigationView_cradle_vertical_offset, 0F)
         topCurvedEdgeTreatment = BottomAppBarTopEdgeTreatment(fabCradleMargin, fabCradleRoundedCornerRadius, cradleVerticalOffset).apply {
-                fabDiameter = fabSize
+            fabDiameter = fabSize
         }
 
         val shapeAppearanceModel = ShapeAppearanceModel.Builder()
-            .setTopEdge(topCurvedEdgeTreatment)
-            .build()
+                .setTopEdge(topCurvedEdgeTreatment)
+                .build()
 
         materialShapeDrawable = MaterialShapeDrawable(shapeAppearanceModel).apply {
             setTint(ContextCompat.getColor(context, R.color.bottom_bar))
@@ -47,8 +46,4 @@ class FabBottomNavigationView @JvmOverloads constructor(
         background = materialShapeDrawable
     }
 
-    override fun setOnNavigationItemSelectedListener(listener: OnNavigationItemSelectedListener?) {
-        super.setOnNavigationItemSelectedListener(listener)
-    }
 }
-

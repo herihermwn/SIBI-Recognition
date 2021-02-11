@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.adarmawan117.recognition.sibi;
 
 import android.Manifest;
@@ -36,8 +35,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Trace;
+import android.util.Log;
 import android.util.Size;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,8 +51,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.MenuView;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -100,11 +104,11 @@ public abstract class CameraActivity
     private LinearLayout gestureLayout;
     private BottomSheetBehavior sheetBehavior;
 
-    private ImageView plusImageView, minusImageView, backButton;
-    public SwitchCompat switchGesture;
+    private ImageView plusImageView, minusImageView, backButton, settingButton;
+    protected MenuView.ItemView delayInfo, gestureInfo;
+    protected SwitchCompat switchGesture;
     private SwitchCompat apiSwitchCompat;
-    private TextView delayTextView;
-    private TextView gestureTitle;
+    private TextView delayTextView, gestureTitle;
     private FloatingActionButton recordButton;
     private FabBottomNavigationView fabBottomNavigationView;
 
@@ -144,6 +148,9 @@ public abstract class CameraActivity
         gestureTitle = findViewById(R.id.gestureTitle);
         recordButton = findViewById(R.id.recordButton);
         fabBottomNavigationView = findViewById(R.id.bottomNavigationView);
+        settingButton = findViewById(R.id.setting_button);
+        delayInfo = findViewById(R.id.delay_info);
+        gestureInfo = findViewById(R.id.gesture_info);
 
         ViewTreeObserver vto = gestureLayout.getViewTreeObserver();
         vto.addOnGlobalLayoutListener(
@@ -162,11 +169,23 @@ public abstract class CameraActivity
         adjustGravity(fabBottomNavigationView);
         adjustWidth(fabBottomNavigationView);
 
+        fabBottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.delay_info:
+                case R.id.gesture_info:
+                    sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    break;
+            }
+            return true;
+        });
+
         apiSwitchCompat.setOnCheckedChangeListener(this);
         recordButton.setOnClickListener(this);
         plusImageView.setOnClickListener(this);
         minusImageView.setOnClickListener(this);
         backButton.setOnClickListener(this);
+        gestureTitle.setOnClickListener(this);
+        settingButton.setOnClickListener(this);
     }
 
     private static void adjustGravity(View v) {
@@ -502,16 +521,22 @@ public abstract class CameraActivity
         delay = Integer.parseInt(delayText);
 
         switch (v.getId()) {
+            case R.id.setting_button:
+                sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                break;
+
             case R.id.plus:
                 if (delay >= 9) return;
                 delay++;
                 delayTextView.setText(String.valueOf(delay));
+                delayInfo.setTitle(delay + " Detik");
                 break;
 
             case R.id.minus:
                 if (delay == 2) return;
                 delay--;
                 delayTextView.setText(String.valueOf(delay));
+                delayInfo.setTitle(delay + " Detik");
                 break;
 
             case R.id.recordButton:
@@ -525,6 +550,7 @@ public abstract class CameraActivity
                 break;
 
             case R.id.back_button:
+                // Call onBack
                 this.onBackPressed();
                 break;
         }
@@ -533,8 +559,11 @@ public abstract class CameraActivity
 
     @Override
     public void onBackPressed() {
+        // Stop thread
         Thread.currentThread().interrupt();
+        // Finish Class
         finish();
+        // Start new activity to menu
         Intent gestureToTextIntent = new Intent(CameraActivity.this, HomeActivity.class);
         startActivity(gestureToTextIntent);
     }
