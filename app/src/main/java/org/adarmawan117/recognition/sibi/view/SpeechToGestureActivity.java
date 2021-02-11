@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,13 +18,17 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
 import com.google.android.material.snackbar.Snackbar;
+
 import org.adarmawan117.recognition.sibi.R;
+
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -205,6 +210,19 @@ public class SpeechToGestureActivity extends AppCompatActivity implements View.O
                         gestureText.setText("Spasi");
                         gestureImage.setVisibility(View.INVISIBLE);
                     });
+                } else if ('z' == lowerCaseResult.charAt(i)) {
+                    runOnUiThread(() -> {
+                        gestureText.setText("Gesture Z");
+                    });
+                    for (int j = 1; j <= 4; j++) {
+                        int id = this.getResources().getIdentifier("gesture_z" + j, "drawable", this.getPackageName());
+                        Log.d("awe", "gesture_z" + j);
+                        runOnUiThread(() -> {
+                            gestureImage.setImageResource(id);
+                            gestureImage.setVisibility(View.VISIBLE);
+                        });
+                        Thread.sleep((long) (delay * 1000 / 3));
+                    }
                 } else {
                     int id = this.getResources().getIdentifier("gesture_" + lowerCaseResult.charAt(i), "drawable", this.getPackageName());
                     String finalResult = result;
