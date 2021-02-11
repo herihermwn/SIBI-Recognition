@@ -163,17 +163,24 @@ public class SpeechToGestureActivity extends AppCompatActivity implements View.O
                 break;
 
             case R.id.show_gesture:
-                int lengthResult = resultSpeech.getText().toString().length();
-
-                // Check lenght input
                 if (playGesture) {
-                    showSnackbar("Sedang menjalankan gesture, mohon tunggu hingga selesai", true);
-                } else if (lengthResult > 0) {
-                    // Run background
-                    Runnable r = this::textToGesture;
-                    new Thread(r).start();
+                    // Menghentikan gesture
+                    playGesture = false;
+                    showGesture.setText("Jalankan Gesture");
                 } else {
-                    showSnackbar("Input tidak boleh kosong", true);
+                    int lengthResult = resultSpeech.getText().toString().length();
+
+                    // Check lenght input
+                    if (playGesture) {
+                        showSnackbar("Sedang menjalankan gesture, mohon tunggu hingga selesai", true);
+                    } else if (lengthResult > 0) {
+                        showGesture.setText("Hentikan Gesture");
+                        // Run background
+                        Runnable r = this::textToGesture;
+                        new Thread(r).start();
+                    } else {
+                        showSnackbar("Input tidak boleh kosong", true);
+                    }
                 }
                 break;
 
@@ -203,6 +210,10 @@ public class SpeechToGestureActivity extends AppCompatActivity implements View.O
 
         for (int i = 0; i < lowerCaseResult.length(); i++) {
             try {
+                // Menghentikan thread
+                if (!playGesture) {
+                    Thread.currentThread().interrupt();
+                }
 
                 // check if input space
                 if (' ' == result.charAt(i)) {
@@ -244,6 +255,7 @@ public class SpeechToGestureActivity extends AppCompatActivity implements View.O
         runOnUiThread(() -> {
             gestureImage.setVisibility(View.INVISIBLE);
             gestureText.setText("Gesture telah selesai");
+            showGesture.setText("Jalankan Gesture");
         });
 
         // Show snackbar
