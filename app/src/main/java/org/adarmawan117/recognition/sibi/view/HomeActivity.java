@@ -3,11 +3,8 @@ package org.adarmawan117.recognition.sibi.view;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import org.adarmawan117.recognition.sibi.DetectorActivity;
 import org.adarmawan117.recognition.sibi.R;
 
@@ -22,6 +19,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        init();
+    }
+
+    private void init() {
         speechToText = findViewById(R.id.speechToGestureLayout);
         gestureToText = findViewById(R.id.gestureToTextLayout);
         infoButton = findViewById(R.id.aboutAppsLayout);
@@ -50,4 +51,5 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
     }
+
 }

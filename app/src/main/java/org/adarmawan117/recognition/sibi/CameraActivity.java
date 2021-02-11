@@ -71,6 +71,7 @@ public abstract class CameraActivity
         Camera.PreviewCallback,                   // onPreviewFrame()
         CompoundButton.OnCheckedChangeListener,
         View.OnClickListener {
+
     private static final Logger LOGGER = new Logger();
 
     private static final int PERMISSIONS_REQUEST = 1;
@@ -255,7 +256,6 @@ public abstract class CameraActivity
     Callback that is called when a new image is available from ImageReader.
     Ref: https://developer.android.com/reference/android/media/ImageReader.OnImageAvailableListener?hl=en
      */
-
     /**
      * Callback for Camera2 API
      */
@@ -324,15 +324,12 @@ public abstract class CameraActivity
 
     @Override
     public synchronized void onStart() {
-        LOGGER.d("onStart " + this);
         super.onStart();
     }
 
     @Override
     public synchronized void onResume() {
-        LOGGER.d("onResume " + this);
         super.onResume();
-
         handlerThread = new HandlerThread("inference");
         handlerThread.start();
         handler = new Handler(handlerThread.getLooper());
@@ -340,8 +337,6 @@ public abstract class CameraActivity
 
     @Override
     public synchronized void onPause() {
-        LOGGER.d("onPause " + this);
-
         handlerThread.quitSafely();
         try {
             handlerThread.join();
@@ -356,13 +351,11 @@ public abstract class CameraActivity
 
     @Override
     public synchronized void onStop() {
-        LOGGER.d("onStop " + this);
         super.onStop();
     }
 
     @Override
     public synchronized void onDestroy() {
-        LOGGER.d("onDestroy " + this);
         super.onDestroy();
     }
 
@@ -428,7 +421,6 @@ public abstract class CameraActivity
     private String chooseCamera() {
         final CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
         try {
-
             for (final String cameraId : manager.getCameraIdList()) {
                 final CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
 

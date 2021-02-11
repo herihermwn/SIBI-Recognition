@@ -99,9 +99,9 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
             detector =
                     TFLiteObjectDetectionAPIModel.create(
                             getAssets(),
-                            TF_OD_API_MODEL_FILE,
-                            TF_OD_API_LABELS_FILE,
-                            TF_OD_API_INPUT_SIZE,
+                            TF_OD_API_MODEL_FILE,          // "palm_detection_without_custom_op.tflite";
+                            TF_OD_API_LABELS_FILE,         // "palm_detection_labelmap.txt";
+                            TF_OD_API_INPUT_SIZE,          // 256
                             TF_OD_API_IS_QUANTIZED);
 
             cropSize = TF_OD_API_INPUT_SIZE;

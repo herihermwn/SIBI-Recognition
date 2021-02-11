@@ -167,13 +167,13 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         try (Scanner scanner = new Scanner(assetManager.open("anchors.csv"));) {
             int x = 0;
             while (scanner.hasNextLine()) {
-//        records.add(getRecordFromLine());
                 String[] cols = scanner.nextLine().split(",");
                 anchors[x++] = new float[]{Float.parseFloat(cols[0]), Float.parseFloat(cols[1]), Float.parseFloat(cols[2]), Float.parseFloat(cols[3])};
             }
         }
         return d;
     }
+
 
     @Override
     public List<Recognition> recognizeImage(Bitmap bitmap, Bitmap oribmp) {
@@ -377,6 +377,7 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
                 gesture = telapakTanganGestureAngka(landmarks);
             }
         } else  if (gestureType == GestureType.HURUF) {
+
             if (outputJoints[0][4] < outputJoints[0][34]) { //
                 gesture = punggungTanganGestureHuruf(landmarks);
             } else {
@@ -471,14 +472,23 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
 
     public static String punggungTanganGestureHuruf(StructuredLandmarks[] landmarks) {
         // finger states
-        boolean jempolTerbuka = false;
-        boolean telunjukTerbuka = false;
-        boolean jariTengahTerbuka = false;
-        boolean jariManisTerbuka = false;
-        boolean kelingkingTerbuka = false;
+        boolean jempolTerbuka      = false;
+        boolean telunjukTerbuka    = false;
+        boolean jariTengahTerbuka  = false;
+        boolean jariManisTerbuka   = false;
+        boolean kelingkingTerbuka  = false;
         LOGGER.d("Punggung tangan huruf joints = " + Arrays.toString(landmarks));
 
+        boolean jempolHorizontal      = landmarks[4].getX()  < landmarks[2].getX();
+        boolean telunjukHorizontal    = landmarks[8].getX()  < landmarks[5].getX();
+        boolean jariTengahHorizontal  = landmarks[12].getX() < landmarks[9].getX();
+        boolean jariManisHorizontal   = landmarks[16].getX() < landmarks[13].getX();
+        boolean kelingkingHorizontal  = landmarks[20].getX() < landmarks[17].getX();
+
+        boolean gestureR = landmarks[8].getX() < landmarks[12].getX();
+        boolean gestureS = landmarks[4].getX() < landmarks[6].getX();
         double pseudoFixKeyPoint = landmarks[2].getX(); //compare x
+
         if (landmarks[3].getX() < pseudoFixKeyPoint && landmarks[4].getX() < pseudoFixKeyPoint) {
             jempolTerbuka = true;
         }
@@ -504,7 +514,46 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         }
 
         // Hand gesture recognition
-
+        if (jempolTerbuka && !telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
+            return "A";
+        } else if (jempolHorizontal && telunjukTerbuka && jariTengahTerbuka && jariManisTerbuka && kelingkingTerbuka) {
+            return "B";
+        } else if (jempolHorizontal && telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
+            return "D";
+        } else if (jempolHorizontal && !telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
+            return "E";
+        } else if (jempolHorizontal && !telunjukTerbuka && jariTengahTerbuka && jariManisTerbuka && kelingkingTerbuka) {
+            return "F";
+        } else if (jempolHorizontal && telunjukHorizontal && jariTengahHorizontal && !jariManisHorizontal && !kelingkingHorizontal) {
+            return "H";
+        } else if (jempolHorizontal && !telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && kelingkingTerbuka) {
+            return "I";
+        } else if (jempolHorizontal && !telunjukHorizontal && !jariTengahHorizontal && !jariManisHorizontal && kelingkingHorizontal) {
+            return "J";
+        } else if (jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
+            return "K";
+        } else if (jempolTerbuka && telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
+            return "L";
+        }
+//        else if (!telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
+//            return "M";
+//        }
+//        else if (jempolHorizontal && telunjukTerbuka && jariTengahTerbuka && jariManisTerbuka && kelingkingTerbuka) {
+//            return "N";
+//        }
+        else if (gestureR && jempolHorizontal && !jariManisTerbuka && !kelingkingTerbuka) {
+            return "R";
+//        } else if (jempolHorizontal && gestureS && !telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
+//            return "S";
+        } else if (jempolHorizontal && telunjukTerbuka && jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
+            return "U";
+//        } else if (jempolHorizontal && jariTengahHorizontal && telunjukTerbuka && jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
+//            return "V";
+        } else if (jempolHorizontal && telunjukTerbuka && jariTengahTerbuka && jariManisTerbuka && !kelingkingTerbuka) {
+            return "W";
+        }  else if (jempolTerbuka && !telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && kelingkingTerbuka) {
+            return "Y";
+        }
 
         return "";
     }
@@ -571,7 +620,8 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
             telunjukTerbuka = true;
         }
 
-        pseudoFixKeyPoint = landmarks[10].getY(); //compare y
+        pseudoFixKeyPoint = landmarks[9].getY(); //compare y
+
         if (landmarks[11].getY() < pseudoFixKeyPoint && landmarks[12].getY() < pseudoFixKeyPoint) {
             jariTengahTerbuka = true;
         }
@@ -604,23 +654,19 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         LOGGER.d("Telapak tangan angka joints = " + Arrays.toString(landmarks));
 
         // Variable Angka 6
-        boolean angka6Kelingking = landmarks[4].getX() < landmarks[13].getX();
-        boolean angka6Jempol = landmarks[18].getY() < landmarks[20].getY();
+        boolean angka6 = (landmarks[4].getX() < landmarks[13].getX()) && (landmarks[18].getY() < landmarks[20].getY());
 
         // Variable Angka 7
-        boolean angka7Manis = landmarks[16].getY() > landmarks[14].getY();
-        boolean angka7Jempol = landmarks[4].getX() < landmarks[9].getX();
+        boolean angka7 = ((landmarks[4].getX() < landmarks[9].getX()) && (landmarks[16].getY() > landmarks[14].getY()));
 
         // Variable Angka 8
-        boolean angka8Tengah = landmarks[12].getY() > landmarks[5].getY();
-        boolean angka8Jempol = landmarks[4].getX() < landmarks[8].getX();
+        boolean angka8 = ((landmarks[4].getX() < landmarks[5].getX()) && (landmarks[12].getY() > landmarks[9].getY()));
 
         // Variable Angka 9
-        boolean angka9Telunjuk = landmarks[8].getY() > landmarks[5].getY();
-        boolean angka9Jempol = landmarks[4].getX() < landmarks[3].getX();
+        boolean angka9 = ((landmarks[4].getX() < landmarks[3].getX()) && (landmarks[8].getY() > landmarks[5].getY()));
 
         double pseudoFixKeyPoint = landmarks[2].getX(); //compare x
-        if (landmarks[3].getX() < pseudoFixKeyPoint && landmarks[4].getX() < pseudoFixKeyPoint) {
+        if (landmarks[3].getX() > pseudoFixKeyPoint && landmarks[4].getX() > pseudoFixKeyPoint) {
             jempolTerbuka = true;
         }
 
@@ -645,28 +691,26 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         }
 
         // Hand gesture recognition
-        if (!jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && jariManisTerbuka && kelingkingTerbuka) {
-            return "5";
-        } else if (angka8Jempol && angka8Tengah && jariManisTerbuka && kelingkingTerbuka && telunjukTerbuka) {
-            return "8";
-        } else if (jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && jariManisTerbuka && kelingkingTerbuka) {
-            return "4";
-        } else if (!jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
-            return "3";
-        } else if (jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
-            return "2";
-        } else if (jempolTerbuka && telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
-            return "1";
-        } else if (!jempolTerbuka && !telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
-            return "0";
-        } else if (angka6Jempol && angka6Kelingking && telunjukTerbuka && jariTengahTerbuka && jariManisTerbuka) {
+        if (angka6 && telunjukTerbuka && jariTengahTerbuka && jariManisTerbuka) {
             return "6";
-        } else if (angka7Jempol && angka7Manis && kelingkingTerbuka && jariTengahTerbuka && telunjukTerbuka) {
+        } else if (angka7 && kelingkingTerbuka && jariTengahTerbuka && telunjukTerbuka) {
             return "7";
-        } else if (angka9Jempol && angka9Telunjuk && jariTengahTerbuka && jariManisTerbuka && kelingkingTerbuka) {
+        } else if (angka8 && jariManisTerbuka && kelingkingTerbuka && telunjukTerbuka) {
+            return "8";
+        } else if (angka9 && jariTengahTerbuka && jariManisTerbuka && kelingkingTerbuka) {
             return "9";
+        } else if (jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && jariManisTerbuka && kelingkingTerbuka) {
+            return "5";
+        } else if (!jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && jariManisTerbuka && kelingkingTerbuka) {
+            return "4";
+        } else if (jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
+            return "3";
+        } else if (!jempolTerbuka && telunjukTerbuka && jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
+            return "2";
         } else if (!jempolTerbuka && telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
-            return "A";
+            return "1";
+        } if (!jempolTerbuka && !telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
+            return "0";
         }
 
         return "";
