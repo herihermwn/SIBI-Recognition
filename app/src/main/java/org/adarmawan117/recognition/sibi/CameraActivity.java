@@ -35,10 +35,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Trace;
-import android.util.Log;
 import android.util.Size;
 import android.view.Gravity;
-import android.view.MenuItem;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,11 +49,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.menu.MenuView;
 import androidx.appcompat.widget.SwitchCompat;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -344,6 +340,43 @@ public abstract class CameraActivity
         Trace.endSection();
     }
 
+    @Override
+    public synchronized void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public synchronized void onResume() {
+        super.onResume();
+        handlerThread = new HandlerThread("inference");
+        handlerThread.start();
+        handler = new Handler(handlerThread.getLooper());
+    }
+
+    @Override
+    public synchronized void onPause() {
+        handlerThread.quitSafely();
+        try {
+            handlerThread.join();
+            handlerThread = null;
+            handler = null;
+        } catch (final InterruptedException e) {
+            LOGGER.e(e, "Exception!");
+        }
+
+        super.onPause();
+    }
+
+    @Override
+    public synchronized void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    public synchronized void onDestroy() {
+        super.onDestroy();
+    }
+
     protected synchronized void runInBackground(final Runnable r) {
         if (handler != null) {
             handler.post(r);
@@ -561,6 +594,7 @@ public abstract class CameraActivity
     public void onBackPressed() {
         // Stop thread
         Thread.currentThread().interrupt();
+        handlerThread.quit();
         // Finish Class
         finish();
         // Start new activity to menu
