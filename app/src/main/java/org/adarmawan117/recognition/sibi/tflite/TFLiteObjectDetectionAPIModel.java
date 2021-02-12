@@ -92,9 +92,6 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
 
     private Interpreter landmarkTfLite;
 
-    private TFLiteObjectDetectionAPIModel() {
-    }
-
     /**
      * Memory-map the model file in Assets.
      */
@@ -377,7 +374,6 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
                 gesture = telapakTanganGestureAngka(landmarks);
             }
         } else  if (gestureType == GestureType.HURUF) {
-
             if (outputJoints[0][4] < outputJoints[0][34]) { //
                 gesture = punggungTanganGestureHuruf(landmarks);
             } else {
@@ -470,7 +466,7 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
     }
 
 
-    public static String punggungTanganGestureHuruf(StructuredLandmarks[] landmarks) {
+    public static String telapakTanganGestureHuruf(StructuredLandmarks[] landmarks) {
         // finger states
         boolean jempolTerbuka      = false;
         boolean telunjukTerbuka    = false;
@@ -478,6 +474,8 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         boolean jariManisTerbuka   = false;
         boolean kelingkingTerbuka  = false;
         LOGGER.d("Punggung tangan huruf joints = " + Arrays.toString(landmarks));
+
+        LOGGER.d("Awe : " + Arrays.toString(landmarks));
 
         boolean jempolHorizontal      = landmarks[4].getX()  < landmarks[2].getX();
         boolean telunjukHorizontal    = landmarks[8].getX()  < landmarks[5].getX();
@@ -547,8 +545,8 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
 //            return "S";
         } else if (jempolHorizontal && telunjukTerbuka && jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
             return "U";
-//        } else if (jempolHorizontal && jariTengahHorizontal && telunjukTerbuka && jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
-//            return "V";
+        } else if (jempolHorizontal && jariTengahHorizontal && telunjukTerbuka && jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
+            return "V";
         } else if (jempolHorizontal && telunjukTerbuka && jariTengahTerbuka && jariManisTerbuka && !kelingkingTerbuka) {
             return "W";
         }  else if (jempolTerbuka && !telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && kelingkingTerbuka) {
@@ -558,14 +556,14 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         return "";
     }
 
-    public static String telapakTanganGestureHuruf(StructuredLandmarks[] landmarks) {
+    public static String punggungTanganGestureHuruf(StructuredLandmarks[] landmarks) {
         // finger states
         boolean jempolTerbuka = false;
         boolean telunjukTerbuka = false;
         boolean jariTengahTerbuka = false;
         boolean jariManisTerbuka = false;
         boolean kelingkingTerbuka = false;
-        LOGGER.d("Punggung tangan huruf joints = " + Arrays.toString(landmarks));
+        LOGGER.d("Telapak tangan huruf joints = " + Arrays.toString(landmarks));
 
         double pseudoFixKeyPoint = landmarks[2].getX(); //compare x
         if (landmarks[3].getX() < pseudoFixKeyPoint && landmarks[4].getX() < pseudoFixKeyPoint) {
