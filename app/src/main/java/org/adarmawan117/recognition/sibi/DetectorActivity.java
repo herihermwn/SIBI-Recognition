@@ -142,14 +142,16 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     protected void processImage() {
         trackingOverlay.postInvalidate();
 
-        GestureType type;
-        if (switchGesture.isChecked()) {
-            type = GestureType.HURUF;
-            gestureInfo.setTitle("Huruf");
-        } else {
-            type = GestureType.ANGKA;
-            gestureInfo.setTitle("Angka");
-        }
+        GestureType type = (switchGesture.isChecked()) ? GestureType.HURUF : GestureType.ANGKA;
+        runOnUiThread(
+                () -> {
+                    if (switchGesture.isChecked()) {
+                        gestureInfo.setTitle("Huruf");
+                    } else {
+                        gestureInfo.setTitle("Angka");
+                    }
+
+                });
 
         detector.setGestureType(type);
 
@@ -201,14 +203,11 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                     trackingOverlay.postInvalidate();
 
                     runOnUiThread(
-                            new Runnable() {
-                                @Override
-                                public void run() {
-                                    for (final Classifier.Recognition recognition : mappedRecognitions) {
-                                        if (recognition.getId() == 2) {
-                                            setGestureTitle(recognition.getTitle());
-                                            break;
-                                        }
+                            () -> {
+                                for (final Classifier.Recognition recognition : mappedRecognitions) {
+                                    if (recognition.getId() == 2) {
+                                        setGestureTitle(recognition.getTitle());
+                                        break;
                                     }
                                 }
                             });
