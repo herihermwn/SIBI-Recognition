@@ -560,10 +560,17 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         boolean cState2 = landmarks[2].getX() > landmarks[12].getX();
         boolean cState3 = landmarks[2].getX() > landmarks[16].getX();
 
+        // Gesture O states
+        boolean oState1 = landmarks[8].getX() - landmarks[4].getX() < 10;
+        boolean oState2 = landmarks[2].getX() > landmarks[8].getX();
+        boolean oState3 = landmarks[4].getY() > landmarks[7].getY();
+
         LOGGER.d("Punggung tangan huruf joints = " + Arrays.toString(landmarks));
 
         if (cState1 && cState2 && cState3) {
             return "C";
+        } else if (oState2 && oState3) {
+            return "O";
         }
 
         return "";
