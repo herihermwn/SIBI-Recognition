@@ -473,9 +473,7 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         boolean jariTengahTerbuka  = false;
         boolean jariManisTerbuka   = false;
         boolean kelingkingTerbuka  = false;
-        LOGGER.d("Punggung tangan huruf joints = " + Arrays.toString(landmarks));
-
-        LOGGER.d("Awe : " + Arrays.toString(landmarks));
+        LOGGER.d("Telapak tangan huruf joints = " + Arrays.toString(landmarks));
 
         boolean jempolHorizontal      = landmarks[4].getX()  < landmarks[2].getX();
         boolean telunjukHorizontal    = landmarks[8].getX()  < landmarks[5].getX();
@@ -557,41 +555,16 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
     }
 
     public static String punggungTanganGestureHuruf(StructuredLandmarks[] landmarks) {
-        // finger states
-        boolean jempolTerbuka = false;
-        boolean telunjukTerbuka = false;
-        boolean jariTengahTerbuka = false;
-        boolean jariManisTerbuka = false;
-        boolean kelingkingTerbuka = false;
-        LOGGER.d("Telapak tangan huruf joints = " + Arrays.toString(landmarks));
+        // Gesture C states
+        boolean cState1 = landmarks[2].getX() > landmarks[8].getX();
+        boolean cState2 = landmarks[2].getX() > landmarks[12].getX();
+        boolean cState3 = landmarks[2].getX() > landmarks[16].getX();
 
-        double pseudoFixKeyPoint = landmarks[2].getX(); //compare x
-        if (landmarks[3].getX() < pseudoFixKeyPoint && landmarks[4].getX() < pseudoFixKeyPoint) {
-            jempolTerbuka = true;
+        LOGGER.d("Punggung tangan huruf joints = " + Arrays.toString(landmarks));
+
+        if (cState1 && cState2 && cState3) {
+            return "C";
         }
-
-        pseudoFixKeyPoint = landmarks[6].getY(); //compare y
-        if (landmarks[7].getY() < pseudoFixKeyPoint && landmarks[8].getY() < pseudoFixKeyPoint) {
-            telunjukTerbuka = true;
-        }
-
-        pseudoFixKeyPoint = landmarks[10].getY(); //compare y
-        if (landmarks[11].getY() < pseudoFixKeyPoint && landmarks[12].getY() < pseudoFixKeyPoint) {
-            jariTengahTerbuka = true;
-        }
-
-        pseudoFixKeyPoint = landmarks[14].getY(); //compare y
-        if (landmarks[15].getY() < pseudoFixKeyPoint && landmarks[16].getY() < pseudoFixKeyPoint) {
-            jariManisTerbuka = true;
-        }
-
-        pseudoFixKeyPoint = landmarks[18].getY(); //compare y
-        if (landmarks[19].getY() < pseudoFixKeyPoint && landmarks[20].getY() < pseudoFixKeyPoint) {
-            kelingkingTerbuka = true;
-        }
-
-        // Hand gesture recognition
-
 
         return "";
     }
