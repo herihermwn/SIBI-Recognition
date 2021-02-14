@@ -571,11 +571,11 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         boolean qState3 = landmarks[20].getX() < 100;
         boolean qState4 = landmarks[16].getX() < 100;
 
-        // Gesture R states
-        boolean rState1 = landmarks[0].getX() > 140;
-        boolean rState2 = landmarks[1].getX() > 90;
-        boolean rState3 = landmarks[4].getX() > 60;
-        boolean rState4 = landmarks[9].getX() > 138;
+        // Gesture X states
+        boolean xState1 = landmarks[0].getX() > 140;
+        boolean xState2 = landmarks[1].getX() > 90;
+        boolean xState3 = landmarks[4].getX() > 60;
+        boolean xState4 = landmarks[9].getX() > 138;
 
         // Gesture P states
         boolean pState1 = landmarks[20].getX() > 90 && landmarks[20].getX() < 140;
@@ -589,8 +589,8 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
             return "O";
         } else if (qState1 && qState2 && qState3 && qState4) {
             return "Q";
-        } else if (rState1 && rState2 && rState3 && rState4) {
-            return "R";
+        } else if (xState1 && xState2 && xState3 && xState4) {
+            return "X";
         } else if (pState1 && pState2) {
             return "P";
         }
