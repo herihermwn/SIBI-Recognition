@@ -373,7 +373,7 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
             } else {
                 gesture = telapakTanganGestureAngka(landmarks);
             }
-        } else  if (gestureType == GestureType.HURUF) {
+        } else if (gestureType == GestureType.HURUF) {
             if (outputJoints[0][4] < outputJoints[0][34]) { //
                 gesture = punggungTanganGestureHuruf(landmarks);
             } else {
@@ -468,18 +468,18 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
 
     public static String telapakTanganGestureHuruf(StructuredLandmarks[] landmarks) {
         // finger states
-        boolean jempolTerbuka      = false;
-        boolean telunjukTerbuka    = false;
-        boolean jariTengahTerbuka  = false;
-        boolean jariManisTerbuka   = false;
-        boolean kelingkingTerbuka  = false;
+        boolean jempolTerbuka = false;
+        boolean telunjukTerbuka = false;
+        boolean jariTengahTerbuka = false;
+        boolean jariManisTerbuka = false;
+        boolean kelingkingTerbuka = false;
         LOGGER.d("Telapak tangan huruf joints = " + Arrays.toString(landmarks));
 
-        boolean jempolHorizontal      = landmarks[4].getX()  < landmarks[2].getX();
-        boolean telunjukHorizontal    = landmarks[8].getX()  < landmarks[5].getX();
-        boolean jariTengahHorizontal  = landmarks[12].getX() < landmarks[9].getX();
-        boolean jariManisHorizontal   = landmarks[16].getX() < landmarks[13].getX();
-        boolean kelingkingHorizontal  = landmarks[20].getX() < landmarks[17].getX();
+        boolean jempolHorizontal = landmarks[4].getX() < landmarks[2].getX();
+        boolean telunjukHorizontal = landmarks[8].getX() < landmarks[5].getX();
+        boolean jariTengahHorizontal = landmarks[12].getX() < landmarks[9].getX();
+        boolean jariManisHorizontal = landmarks[16].getX() < landmarks[13].getX();
+        boolean kelingkingHorizontal = landmarks[20].getX() < landmarks[17].getX();
 
         boolean gestureR = landmarks[8].getX() < landmarks[12].getX();
         boolean gestureS = landmarks[4].getX() < landmarks[6].getX();
@@ -547,7 +547,7 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
             return "V";
         } else if (jempolHorizontal && telunjukTerbuka && jariTengahTerbuka && jariManisTerbuka && !kelingkingTerbuka) {
             return "W";
-        }  else if (jempolTerbuka && !telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && kelingkingTerbuka) {
+        } else if (jempolTerbuka && !telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && kelingkingTerbuka) {
             return "Y";
         }
 
@@ -568,15 +568,23 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         // Gesture Q states
         boolean qState1 = landmarks[4].getY() - landmarks[12].getX() < 10;
         boolean qState2 = landmarks[4].getY() > landmarks[7].getY();
+        boolean qState3 = landmarks[20].getX() < 100;
+        boolean qState4 = landmarks[16].getX() < 100;
 
-        LOGGER.d("Punggung tangan huruf joints = " + Arrays.toString(landmarks));
+        // Gesture R states
+        boolean rState1 = landmarks[0].getX() > 140;
+        boolean rState2 = landmarks[1].getX() > 90;
+        boolean rState3 = landmarks[4].getX() > 60;
+        boolean rState4 = landmarks[9].getX() > 138;
 
         if (cState1 && cState2 && cState3) {
             return "C";
         } else if (oState2 && oState3) {
             return "O";
-        } else if (qState1 && qState2) {
+        } else if (qState1 && qState2 && qState3 && qState4) {
             return "Q";
+        } else if (rState1 && rState2 && rState3 && rState4) {
+            return "R";
         }
 
         return "";
@@ -693,7 +701,8 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
             return "2";
         } else if (!jempolTerbuka && telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
             return "1";
-        } if (!jempolTerbuka && !telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
+        }
+        if (!jempolTerbuka && !telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
             return "0";
         }
 
