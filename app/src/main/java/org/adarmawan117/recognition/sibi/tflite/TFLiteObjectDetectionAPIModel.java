@@ -539,8 +539,8 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
 //        }
         else if (gestureR && jempolHorizontal && !jariManisTerbuka && !kelingkingTerbuka) {
             return "R";
-//        } else if (jempolHorizontal && gestureS && !telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
-//            return "S";
+        } else if (!jempolTerbuka && !telunjukTerbuka && !jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
+            return "S";
         } else if (jempolHorizontal && telunjukTerbuka && jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
             return "U";
         } else if (jempolHorizontal && jariTengahHorizontal && telunjukTerbuka && jariTengahTerbuka && !jariManisTerbuka && !kelingkingTerbuka) {
@@ -576,6 +576,12 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         boolean rState2 = landmarks[1].getX() > 90;
         boolean rState3 = landmarks[4].getX() > 60;
         boolean rState4 = landmarks[9].getX() > 138;
+
+        LOGGER.d("Punggung tangan huruf joints = " + Arrays.toString(landmarks));
+
+        for (int i = 0; i < landmarks.length; i++) {
+            LOGGER.d("landmark " + i + " " + landmarks[i].toString());
+        }
 
         if (cState1 && cState2 && cState3) {
             return "C";
