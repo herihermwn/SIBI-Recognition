@@ -577,11 +577,11 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         boolean rState3 = landmarks[4].getX() > 60;
         boolean rState4 = landmarks[9].getX() > 138;
 
-        LOGGER.d("Punggung tangan huruf joints = " + Arrays.toString(landmarks));
+        // Gesture P states
+        boolean pState1 = landmarks[20].getX() > 90 && landmarks[20].getX() < 140;
+        boolean pState2 = landmarks[20].getY() > 110;
 
-        for (int i = 0; i < landmarks.length; i++) {
-            LOGGER.d("landmark " + i + " " + landmarks[i].toString());
-        }
+        LOGGER.d("Punggung tangan huruf joints = " + Arrays.toString(landmarks));
 
         if (cState1 && cState2 && cState3) {
             return "C";
@@ -591,6 +591,8 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
             return "Q";
         } else if (rState1 && rState2 && rState3 && rState4) {
             return "R";
+        } else if (pState1 && pState2) {
+            return "P";
         }
 
         return "";
