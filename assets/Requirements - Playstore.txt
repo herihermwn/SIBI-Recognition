@@ -1,0 +1,16 @@
+=> Icon buat beberapa ukuran
+- 48 x 48   : DONE
+- 72 x 72   : DONE
+- 96 x 96   : DONE
+- 144 x 144 : DONE
+- 192 x 192 : DONE
+- 512 x 512 : DONE
+
+=> buat banner ukurannya
+- 1024 x 500 : DONE
+
+=> Deskripsi aplikasi
+	: Gunakan SIBI Recognition untuk menterjemahkan dan mempelajari Bahasa isyarat SIBI.
+
+=> Judul
+	: Aplikasi Penerjemah Bahasa Isyarat SIBI (SIBI Recognition)
